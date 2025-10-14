@@ -757,7 +757,7 @@
             `).join('');
         }
 
-        // ==================== PERSONAL PROGRAM ====================
+       // ==================== PERSONAL PROGRAM ====================
         document.getElementById('personalForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -765,6 +765,50 @@
             const lastName = document.getElementById('lastName').value.trim();
             const fullName = `${firstName} ${lastName}`;
             
+            const personalResult = document.getElementById('personalResult');
+            personalResult.innerHTML = ''; // Clear previous results
+
+            // Find user's groups
+            const userGroup = DATA.groupes.find(group => 
+                group.members.some(member => member.toLowerCase() === fullName.toLowerCase())
+            );
+
             // Find user's ateliers
             const userAteliers = [];
-            for (let i = 1;
+            for (let i = 1; i <= 6; i++) {
+                const atelier = DATA.ateliers[i];
+                if (atelier.participants.some(p => p.toLowerCase() === fullName.toLowerCase())) {
+                    userAteliers.push(atelier);
+                }
+            }
+
+            if (userGroup || userAteliers.length > 0) {
+                let resultHtml = `<div class="search-result">
+                                  <div class="result-title">Programme de ${fullName}</div>`;
+
+                if (userGroup) {
+                    resultHtml += `<div class="program-item">
+                                       <div class="program-title">Groupe de Résidence</div>
+                                       <div class="program-info"><strong>Nom du Groupe :</strong> ${userGroup.name}</div>
+                                       <div class="program-info"><strong>Description :</strong> ${userGroup.description}</div>
+                                   </div>`;
+                }
+
+                if (userAteliers.length > 0) {
+                    resultHtml += `<div class="program-item" style="border-left-color: #2d2654;">
+                                       <div class="program-title">Ateliers Inscrits</div>
+                                       ${userAteliers.map(a => `<div class="program-info">
+                                           <strong>${a.title} :</strong> ${a.horaire} à ${a.location}
+                                       </div>`).join('')}
+                                   </div>`;
+                }
+                
+                resultHtml += `</div>`;
+                personalResult.innerHTML = resultHtml;
+
+            } else {
+                personalResult.innerHTML = `<div class="info-box" style="border-color: #e74c3c; background: #fbecec; color: #c0392b;">
+                                            ⚠️ <strong>Aucun programme trouvé</strong> pour ${fullName}. Vérifiez l'orthographe ou contactez l'administration.
+                                        </div>`;
+            }
+        });
