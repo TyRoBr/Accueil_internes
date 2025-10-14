@@ -430,6 +430,15 @@
                 margin-left: 0;
                 margin-top: 10px;
             }
+            .login-logo-container{
+                dipslay: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            .login-logo{
+                height: 60px;
+                width: auto;
+            }
         }
     </style>
 </head>
@@ -437,6 +446,9 @@
     
     <div class="login-container" id="loginContainer">
         <div class="login-box">
+            <div class="login-logo-container">
+                <img src="images/logo.jpg" alt = "Logo" class="login-logo">
+            </div>
             <h2>🔐 Accès Internat Brest</h2>
             <form id="loginForm">
                 <input type="password" id="passwordInput" placeholder="Mot de passe" required>
@@ -450,7 +462,7 @@
         <nav class="navbar">
             <div class="navbar-content">
                 <div class="navbar-brand">
-                    <img src="Logo association amélioré.jpg" alt="Logo" class="navbar-logo">
+                    <img src="images/logo.jpg" alt="Logo" class="navbar-logo">
                 </div>
                 <div class="navbar-menu">
                     <button class="nav-btn active" onclick="showPage('planning', event)">Planning</button>
