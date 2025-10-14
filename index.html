@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Internat Brest</title>
+    <title>Internat Brest - Accès</title>
     <style>
+        /* Styles Globaux */
         * {
             margin: 0;
             padding: 0;
@@ -17,11 +18,75 @@
             min-height: 100vh;
         }
         
-       
+        /* Bouton Global */
+        .btn {
+            padding: 12px 24px;
+            background: #2d2654;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
         
+        .btn:hover {
+            background: #3b9fc9;
+        }
+
+        /* LOGIN PAGE */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: #2d2654;
+            margin-bottom: 25px;
+            font-size: 28px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: #3b9fc9;
+        }
+
+        .login-error {
+            color: #c0392b;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 14px;
+            display: none;
+        }
+
         /* MAIN APP */
         .app-container {
-            display: none;
+            display: none; /* Cache par défaut */
             min-height: 100vh;
         }
         
@@ -79,19 +144,8 @@
         }
         
         .logout-btn {
-            padding: 12px 24px;
-            background: #2d2654;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
+            /* Utilisation du style .btn pour harmoniser */
             margin-left: 15px;
-            transition: all 0.3s;
-        }
-        
-        .logout-btn:hover {
-            background: #3b9fc9;
         }
         
         .content {
@@ -328,12 +382,33 @@
                 padding: 10px 15px;
                 font-size: 13px;
             }
+            .navbar-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .navbar-menu {
+                margin-top: 15px;
+            }
+            .logout-btn {
+                margin-left: 0;
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
 <body>
     
-    <!-- MAIN APP -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <h2>🔐 Accès Internat Brest</h2>
+            <form id="loginForm">
+                <input type="password" id="passwordInput" placeholder="Mot de passe" required>
+                <div class="login-error" id="loginError">Mot de passe incorrect.</div>
+                <button type="submit" class="btn">Se Connecter</button>
+            </form>
+        </div>
+    </div>
+    
     <div class="app-container" id="appContainer">
         <nav class="navbar">
             <div class="navbar-content">
@@ -341,35 +416,33 @@
                     <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='25' r='15' fill='%232d2654'/%3E%3Cpath d='M 30 35 Q 40 45 50 40 Q 60 35 70 30' fill='%233b9fc9'/%3E%3Cpath d='M 40 50 L 60 50 L 65 75 Q 50 80 35 75 Z' fill='%232d2654'/%3E%3C/svg%3E" alt="Logo" class="navbar-logo">
                 </div>
                 <div class="navbar-menu">
-                    <button class="nav-btn active" onclick="showPage('planning')">Planning</button>
-                    <button class="nav-btn" onclick="showPage('ateliers')">Ateliers</button>
-                    <button class="nav-btn" onclick="showPage('groupes')">Groupes</button>
-                    <button class="nav-btn" onclick="showPage('plan')">Plan</button>
-                    <button class="nav-btn" onclick="showPage('personal')">Mon Programme</button>
-                    <button class="nav-btn" onclick="showPage('contact')">Contact</button>
-                    <button class="logout-btn" onclick="logout()">Déconnexion</button>
+                    <button class="nav-btn active" onclick="showPage('planning', event)">Planning</button>
+                    <button class="nav-btn" onclick="showPage('ateliers', event)">Ateliers</button>
+                    <button class="nav-btn" onclick="showPage('groupes', event)">Groupes</button>
+                    <button class="nav-btn" onclick="showPage('plan', event)">Plan</button>
+                    <button class="nav-btn" onclick="showPage('personal', event)">Mon Programme</button>
+                    <button class="nav-btn" onclick="showPage('contact', event)">Contact</button>
+                    <button class="logout-btn btn" onclick="logout()">Déconnexion</button>
                 </div>
             </div>
         </nav>
 
         <div class="content">
-            <!-- PLANNING PAGE -->
             <div id="planningPage" class="page active">
                 <h1 class="page-title">📅 Planning Général</h1>
                 <div id="planningContent"></div>
             </div>
 
-            <!-- ATELIERS PAGE -->
             <div id="ateliersPage" class="page">
                 <h1 class="page-title">🎨 Ateliers</h1>
                 
                 <div class="tabs">
-                    <button class="tab-btn active" onclick="showTab(1)">Atelier 1</button>
-                    <button class="tab-btn" onclick="showTab(2)">Atelier 2</button>
-                    <button class="tab-btn" onclick="showTab(3)">Atelier 3</button>
-                    <button class="tab-btn" onclick="showTab(4)">Atelier 4</button>
-                    <button class="tab-btn" onclick="showTab(5)">Atelier 5</button>
-                    <button class="tab-btn" onclick="showTab(6)">Atelier 6</button>
+                    <button class="tab-btn active" onclick="showTab(1, event)">Atelier 1</button>
+                    <button class="tab-btn" onclick="showTab(2, event)">Atelier 2</button>
+                    <button class="tab-btn" onclick="showTab(3, event)">Atelier 3</button>
+                    <button class="tab-btn" onclick="showTab(4, event)">Atelier 4</button>
+                    <button class="tab-btn" onclick="showTab(5, event)">Atelier 5</button>
+                    <button class="tab-btn" onclick="showTab(6, event)">Atelier 6</button>
                 </div>
                 
                 <div id="atelier1" class="tab-content active"></div>
@@ -380,19 +453,16 @@
                 <div id="atelier6" class="tab-content"></div>
             </div>
 
-            <!-- GROUPES PAGE -->
             <div id="groupesPage" class="page">
                 <h1 class="page-title">👥 Groupes</h1>
                 <div id="groupesContent"></div>
             </div>
 
-            <!-- PLAN PAGE -->
             <div id="planPage" class="page">
                 <h1 class="page-title">🗺️ Plan des Lieux</h1>
                 <div id="planContent"></div>
             </div>
 
-            <!-- PERSONAL PAGE -->
             <div id="personalPage" class="page">
                 <h1 class="page-title">👤 Mon Programme Personnalisé</h1>
                 
@@ -412,7 +482,6 @@
                 </div>
             </div>
 
-            <!-- CONTACT PAGE -->
             <div id="contactPage" class="page">
                 <h1 class="page-title">📧 Contact</h1>
                 
@@ -452,7 +521,11 @@
     <script>
         // ==================== CONFIGURATION ====================
         
-        // DONNÉES À PERSONNALISER
+        // MOT DE PASSE COMMUN (ATTENTION: Non sécurisé pour une app réelle)
+        const COMMON_PASSWORD = "brest2025";
+        const IS_LOGGED_IN_KEY = 'internatLoggedIn'; // Clé pour localStorage
+
+        // DONNÉES À PERSONNALISER (laissées telles quelles)
         const DATA = {
             planning: [
                 { date: '2025-10-20', time: '14:00', title: 'Accueil des participants', location: 'Hall principal', description: 'Accueil et distribution des badges' },
@@ -547,18 +620,62 @@
             ]
         };
 
-        
+        // ==================== AUTHENTIFICATION ====================
 
+        document.getElementById('loginForm').addEventListener('submit', login);
+
+        function login(e) {
+            e.preventDefault();
+            const passwordInput = document.getElementById('passwordInput');
+            const loginError = document.getElementById('loginError');
+
+            if (passwordInput.value === COMMON_PASSWORD) {
+                localStorage.setItem(IS_LOGGED_IN_KEY, 'true');
+                showApp();
+            } else {
+                loginError.style.display = 'block';
+                passwordInput.value = ''; // Clear the password field
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem(IS_LOGGED_IN_KEY);
+            document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        function showApp() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            document.getElementById('loginError').style.display = 'none'; // Cache l'erreur si l'utilisateur revient après une erreur
+            loadAllData(); // Charge les données au moment de l'authentification
+        }
+
+        function init() {
+            if (localStorage.getItem(IS_LOGGED_IN_KEY) === 'true') {
+                showApp();
+            } else {
+                logout(); // Affiche la page de connexion
+            }
+        }
+        
         // ==================== NAVIGATION ====================
-        function showPage(pageName) {
+        function showPage(pageName, event) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             
             document.getElementById(pageName + 'Page').classList.add('active');
-            event.target.classList.add('active');
+            // Assure que le bouton cliqué (event.target) est actif
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Pour le chargement initial, active le bouton 'Planning'
+                document.querySelector(`.nav-btn[onclick="showPage('${pageName}', event)"]`).classList.add('active');
+            }
         }
 
-        function showTab(tabNumber) {
+        function showTab(tabNumber, event) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
@@ -566,12 +683,13 @@
             document.getElementById('atelier' + tabNumber).classList.add('active');
         }
 
-        // ==================== LOAD DATA ====================
+        // ==================== LOAD DATA (Pas de changement majeur) ====================
         function loadAllData() {
             loadPlanning();
             loadAteliers();
             loadGroupes();
             loadPlan();
+            showPage('planning'); // Afficher la page planning par défaut après le login
         }
 
         function loadPlanning() {
@@ -596,18 +714,20 @@
             for (let i = 1; i <= 6; i++) {
                 const atelier = DATA.ateliers[i];
                 const container = document.getElementById('atelier' + i);
-                container.innerHTML = `
-                    <div class="content-section">
-                        <h3>${atelier.title}</h3>
-                        <p><strong>📝 Description :</strong> ${atelier.description}</p>
-                        <p><strong>📍 Lieu :</strong> ${atelier.location}</p>
-                        <p><strong>🕐 Horaires :</strong> ${atelier.horaire}</p>
-                        <p><strong>👥 Participants :</strong></p>
-                        <div class="participants-list">
-                            ${atelier.participants.map(p => `<div class="participant-item">✓ ${p}</div>`).join('')}
+                if (atelier) { // Vérification de sécurité
+                    container.innerHTML = `
+                        <div class="content-section">
+                            <h3>${atelier.title}</h3>
+                            <p><strong>📝 Description :</strong> ${atelier.description}</p>
+                            <p><strong>📍 Lieu :</strong> ${atelier.location}</p>
+                            <p><strong>🕐 Horaires :</strong> ${atelier.horaire}</p>
+                            <p><strong>👥 Participants :</strong></p>
+                            <div class="participants-list">
+                                ${atelier.participants.map(p => `<div class="participant-item">✓ ${p}</div>`).join('')}
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             }
         }
 
@@ -636,7 +756,8 @@
             `).join('');
         }
 
-       // ==================== PERSONAL PROGRAM ====================
+        // ==================== PERSONAL PROGRAM & CONTACT (Non modifiés) ====================
+        
         document.getElementById('personalForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -663,23 +784,23 @@
 
             if (userGroup || userAteliers.length > 0) {
                 let resultHtml = `<div class="search-result">
-                                  <div class="result-title">Programme de ${fullName}</div>`;
+                                    <div class="result-title">Programme de ${fullName}</div>`;
 
                 if (userGroup) {
                     resultHtml += `<div class="program-item">
-                                       <div class="program-title">Groupe de Résidence</div>
-                                       <div class="program-info"><strong>Nom du Groupe :</strong> ${userGroup.name}</div>
-                                       <div class="program-info"><strong>Description :</strong> ${userGroup.description}</div>
-                                   </div>`;
+                                        <div class="program-title">Groupe de Résidence</div>
+                                        <div class="program-info"><strong>Nom du Groupe :</strong> ${userGroup.name}</div>
+                                        <div class="program-info"><strong>Description :</strong> ${userGroup.description}</div>
+                                    </div>`;
                 }
 
                 if (userAteliers.length > 0) {
                     resultHtml += `<div class="program-item" style="border-left-color: #2d2654;">
-                                       <div class="program-title">Ateliers Inscrits</div>
-                                       ${userAteliers.map(a => `<div class="program-info">
-                                           <strong>${a.title} :</strong> ${a.horaire} à ${a.location}
-                                       </div>`).join('')}
-                                   </div>`;
+                                        <div class="program-title">Ateliers Inscrits</div>
+                                        ${userAteliers.map(a => `<div class="program-info">
+                                            <strong>${a.title} :</strong> ${a.horaire} à ${a.location}
+                                        </div>`).join('')}
+                                    </div>`;
                 }
                 
                 resultHtml += `</div>`;
@@ -691,3 +812,17 @@
                                         </div>`;
             }
         });
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const successDiv = document.getElementById('contactSuccess');
+            successDiv.innerHTML = '<div class="success-message">✅ Votre message a été envoyé avec succès ! Nous vous recontacterons sous peu.</div>';
+            document.getElementById('contactForm').reset();
+            setTimeout(() => successDiv.innerHTML = '', 5000); // Clear message after 5 seconds
+        });
+
+        // ==================== INITIALISATION ====================
+        window.onload = init; // Démarre l'application en vérifiant l'authentification
+    </script>
+</body>
+</html>
