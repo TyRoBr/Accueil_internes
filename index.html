@@ -594,15 +594,22 @@
         e.preventDefault();
         const passwordInput = document.getElementById('passwordInput');
         const loginError = document.getElementById('loginError');
-
-        if (passwordInput.value.trim() === COMMON_PASSWORD) { // 🔑 trim ajouté
+        const enteredPassword = passwordInput.value.trim();
+        console.log("Mot de passe saisi :", enteredPassword);
+        console.log("Mot de passe attendu :", COMMON_PASSWORD);
+        
+        if (enteredPassword === COMMON_PASSWORD) {
             localStorage.setItem(IS_LOGGED_IN_KEY, 'true');
+            console.log("Connexion réussie, redirection...");
             showApp();
         } else {
             loginError.style.display = 'block';
             passwordInput.value = '';
+            passwordInput.focus();
+            console.log("Échec de connexion");
         }
     }
+
 
     function logout() {
         localStorage.removeItem(IS_LOGGED_IN_KEY);
@@ -619,18 +626,20 @@
     }
 
     function init() {
-    try {
-        if (localStorage.getItem(IS_LOGGED_IN_KEY) === 'true') {
+        console.log("Initialisation...");
+        const isLoggedIn = localStorage.getItem(IS_LOGGED_IN_KEY);
+        console.log("Statut de connexion :", isLoggedIn);
+        
+        if (isLoggedIn === 'true') {
+            console.log("Utilisateur connecté, affichage de l'app");
             showApp();
         } else {
+            console.log("Utilisateur non connecté, affichage du login");
             logout();
         }
-    } catch (e) {
-        console.error("Erreur d'initialisation :", e);
-        logout();
-    }
     }
     window.onload = init;
+
 
     // ==================== NAVIGATION ====================
     function showPage(pageName, event) {
