@@ -619,11 +619,16 @@
     }
 
     function init() {
+    try {
         if (localStorage.getItem(IS_LOGGED_IN_KEY) === 'true') {
             showApp();
         } else {
             logout();
         }
+    } catch (e) {
+        console.error("Erreur d'initialisation :", e);
+        logout();
+    }
     }
 
     // ==================== NAVIGATION ====================
