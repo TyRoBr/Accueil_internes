@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plateforme de Planning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        /* LOGIN PAGE */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .login-box h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        /* MAIN APP */
+        .app-container {
+            display: none;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 0;
+        }
+        
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+        
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .navbar-menu {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .nav-btn {
+            padding: 10px 20px;
+            background: transparent;
+            color: #555;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .content {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .page {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .page-title {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        /* FORMS */
+        .admin-form {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .admin-form h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row input, .form-row textarea, .form-row select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-row textarea {
+            grid-column: 1 / -1;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        /* LISTS */
+        .items-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .item-card {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        
+        .item-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .item-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        /* PERSONAL PAGE */
+        .personal-search {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .search-result {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .my-events {
+            margin-top: 20px;
+        }
+        
+        .my-event {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-note {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <h1>🔐 Accès Plateforme</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="accessKey">Clé d'accès</label>
+                    <input type="password" id="accessKey" placeholder="Entrez la clé d'accès" required>
+                </div>
+                <button type="submit" class="btn">Se connecter</button>
+                <div id="errorMessage" class="error"></div>
+            </form>
+            <p style="margin-top: 20px; text-align: center; color: #999; font-size: 12px;">
+                Clé par défaut : planning2025
+            </p>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="app-container" id="appContainer">
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="navbar-brand">📅 Plateforme</div>
+                <div class="navbar-menu">
+                    <button class="nav-btn active" onclick="showPage('planning')">Planning</button>
+                    <button class="nav-btn" onclick="showPage('groups')">Groupes</button>
+                    <button class="nav-btn" onclick="showPage('map')">Plan</button>
+                    <button class="nav-btn" onclick="showPage('personal')">Mon Programme</button>
+                    <button class="logout-btn" onclick="logout()">Déconnexion</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="content">
+            <!-- PLANNING PAGE -->
+            <div id="planningPage" class="page active">
+                <h1 class="page-title">📅 Planning Général</h1>
+                
+                <div class="admin-form">
+                    <h2>➕ Ajouter un événement</h2>
+                    <form id="eventForm">
+                        <div class="form-row">
+                            <input type="text" id="eventTitle" placeholder="Titre de l'événement" required>
+                            <input type="date" id="eventDate" required>
+                        </div>
+                        <div class="form-row">
+                            <input type="time" id="eventTime" required>
+                            <input type="text" id="eventLocation" placeholder="Lieu">
+                        </div>
+                        <div class="form-row">
+                            <select id="eventGroup">
+                                <option value="">Tous les groupes</option>
+                            </select>
+                            <input type="text" id="eventParticipants" placeholder="Participants (séparés par des virgules)">
+                        </div>
+                        <div class="form-row">
+                            <textarea id="eventDescription" placeholder="Description"></textarea>
+                        </div>
+                        <button type="submit" class="btn">Ajouter l'événement</button>
+                    </form>
+                </div>
+                
+                <div class="items-list" id="eventsList"></div>
+            </div>
+
+            <!-- GROUPS PAGE -->
+            <div id="groupsPage" class="page">
+                <h1 class="page-title">👥 Gestion des Groupes</h1>
+                
+                <div class="admin-form">
+                    <h2>➕ Créer un groupe</h2>
+                    <form id="groupForm">
+                        <div class="form-row">
+                            <input type="text" id="groupName" placeholder="Nom du groupe" required class="full-width">
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="groupColor" placeholder="Couleur (ex: #667eea)" value="#667eea">
+                            <input type="text" id="groupMembers" placeholder="Membres (Prénom Nom, séparés par des virgules)">
+                        </div>
+                        <div class="form-row">
+                            <textarea id="groupDescription" placeholder="Description du groupe"></textarea>
+                        </div>
+                        <button type="submit" class="btn">Créer le groupe</button>
+                    </form>
+                </div>
+                
+                <div class="items-list" id="groupsList"></div>
+            </div>
+
+            <!-- MAP PAGE -->
+            <div id="mapPage" class="page">
+                <h1 class="page-title">🗺️ Plan des Lieux</h1>
+                
+                <div class="admin-form">
+                    <h2>➕ Ajouter un lieu</h2>
+                    <form id="mapForm">
+                        <div class="form-row">
+                            <input type="text" id="placeName" placeholder="Nom du lieu" required>
+                            <input type="text" id="placeBuilding" placeholder="Bâtiment/Étage">
+                        </div>
+                        <div class="form-row">
+                            <textarea id="placeDescription" placeholder="Description et indications"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <input type="url" id="placeImageUrl" placeholder="URL de l'image/plan (optionnel)" class="full-width">
+                        </div>
+                        <button type="submit" class="btn">Ajouter le lieu</button>
+                    </form>
+                </div>
+                
+                <div class="items-list" id="placesList"></div>
+            </div>
+
+            <!-- PERSONAL PAGE -->
+            <div id="personalPage" class="page">
+                <h1 class="page-title">👤 Mon Programme Personnalisé</h1>
+                
+                <div class="personal-search">
+                    <h2 style="color: #333; margin-bottom: 20px;">Rechercher mon programme</h2>
+                    <form id="personalForm">
+                        <div class="form-row">
+                            <input type="text" id="firstName" placeholder="Prénom" required>
+                            <input type="text" id="lastName" placeholder="Nom" required>
+                        </div>
+                        <button type="submit" class="btn">Afficher mon programme</button>
+                    </form>
+                    
+                    <div id="personalResult"></div>
+                </div>
+                
+                <div class="info-note">
+                    💡 <strong>Astuce :</strong> Votre programme personnel affiche uniquement les événements qui vous concernent, soit parce que votre nom est listé comme participant, soit parce que vous faites partie du groupe ciblé.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ACCESS_KEY = 'planning2025';
+        let events = [];
+        let groups = [];
+        let places = [];
+        let isAuthenticated = false;
+
+        // INITIALIZATION
+        function init() {
+            loadData();
+            checkAuth();
+        }
+
+        function loadData() {
+            events = JSON.parse(sessionStorage.getItem('events') || '[]');
+            groups = JSON.parse(sessionStorage.getItem('groups') || '[]');
+            places = JSON.parse(sessionStorage.getItem('places') || '[]');
+        }
+
+        function saveData() {
+            sessionStorage.setItem('events', JSON.stringify(events));
+            sessionStorage.setItem('groups', JSON.stringify(groups));
+            sessionStorage.setItem('places', JSON.stringify(places));
+        }
+
+        function checkAuth() {
+            const auth = sessionStorage.getItem('authenticated');
+            if (auth === 'true') {
+                isAuthenticated = true;
+                showApp();
+            }
+        }
+
+        // LOGIN
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const key = document.getElementById('accessKey').value;
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (key === ACCESS_KEY) {
+                sessionStorage.setItem('authenticated', 'true');
+                isAuthenticated = true;
+                errorMsg.textContent = '';
+                showApp();
+            } else {
+                errorMsg.textContent = 'Clé d\'accès incorrecte';
+            }
+        });
+
+        function showApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            updateGroupSelect();
+            displayAllData();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('authenticated');
+            isAuthenticated = false;
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('accessKey').value = '';
+        }
+
+        // NAVIGATION
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(pageName + 'Page').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // EVENTS
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const participants = document.getElementById('eventParticipants').value
+                .split(',')
+                .map(p => p.trim())
+                .filter(p => p);
+            
+            const event = {
+                id: Date.now(),
+                title: document.getElementById('eventTitle').value,
+                date: document.getElementById('eventDate').value,
+                time: document.getElementById('eventTime').value,
+                location: document.getElementById('eventLocation').value,
+                group: document.getElementById('eventGroup').value,
+                participants: participants,
+                description: document.getElementById('eventDescription').value
+            };
+            
+            events.push(event);
+            events.sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
+            
+            saveData();
+            displayEvents();
+            this.reset();
+        });
+
+        function displayEvents() {
+            const container = document.getElementById('eventsList');
+            
+            if (events.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun événement. Ajoutez-en un ci-dessus !</div>';
+                return;
+            }
+            
+            container.innerHTML = events.map(event => {
+                const dateObj = new Date(event.date);
+                const dateFormatted = dateObj.toLocaleDateString('fr-FR', { 
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+                });
+                
+                const groupName = event.group ? groups.find(g => g.id == event.group)?.name || '' : '';
+                
+                return `
+                    <div class="item-card">
+                        <div class="item-header">
+                            <div style="flex: 1;">
+                                <div class="item-title">${event.title}</div>
+                                <div class="item-info">📅 ${dateFormatted} à ${event.time}</div>
+                                ${event.location ? '<div class="item-info">📍 ' + event.location + '</div>' : ''}
+                                ${groupName ? '<div class="item-info">👥 ' + groupName + '</div>' : ''}
+                                ${event.participants.length > 0 ? '<div class="item-info">👤 ' + event.participants.join(', ') + '</div>' : ''}
+                                ${event.description ? '<div class="item-info" style="margin-top: 10px;">' + event.description + '</div>' : ''}
+                            </div>
+                            <button class="delete-btn" onclick="deleteEvent(${event.id})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteEvent(id) {
+            if (confirm('Supprimer cet événement ?')) {
+                events = events.filter(e => e.id !== id);
+                saveData();
+                displayEvents();
+            }
+        }
+
+        // GROUPS
+        document.getElementById('groupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const members = document.getElementById('groupMembers').value
+                .split(',')
+                .map(m => m.trim())
+                .filter(m => m);
+            
+            const group = {
+                id: Date.now(),
+                name: document.getElementById('groupName').value,
+                color: document.getElementById('groupColor').value,
+                members: members,
+                description: document.getElementById('groupDescription').value
+            };
+            
+            groups.push(group);
+            saveData();
+            updateGroupSelect();
+            displayGroups();
+            this.reset();
+        });
+
+        function displayGroups() {
+            const container = document.getElementById('groupsList');
+            
+            if (groups.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun groupe. Créez-en un ci-dessus !</div>';
+                return;
+            }
+            
+            container.innerHTML = groups.map(group => `
+                <div class="item-card" style="border-left-color: ${group.color}">
+                    <div class="item-header">
+                        <div style="flex: 1;">
+                            <div class="item-title">${group.name}</div>
+                            ${group.members.length > 0 ? '<div class="item-info">👥 ' + group.members.length + ' membres: ' + group.members.join(', ') + '</div>' : ''}
+                            ${group.description ? '<div class="item-info" style="margin-top: 8px;">' + group.description + '</div>' : ''}
+                        </div>
+                        <button class="delete-btn" onclick="deleteGroup(${group.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteGroup(id) {
+            if (confirm('Supprimer ce groupe ?')) {
+                groups = groups.filter(g => g.id !== id);
+                saveData();
+                updateGroupSelect();
+                displayGroups();
+            }
+        }
+
+        function updateGroupSelect() {
+            const select = document.getElementById('eventGroup');
+            select.innerHTML = '<option value="">Tous les groupes</option>' +
+                groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+        }
+
+        // PLACES/MAP
+        document.getElementById('mapForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const place = {
+                id: Date.now(),
+                name: document.getElementById('placeName').value,
+                building: document.getElementById('placeBuilding').value,
+                description: document.getElementById('placeDescription').value,
+                imageUrl: document.getElementById('placeImageUrl').value
+            };
+            
+            places.push(place);
+            saveData();
+            displayPlaces();
+            this.reset();
+        });
+
+        function displayPlaces() {
+            const container = document.getElementById('placesList');
+            
+            if (places.length === 0) {
+                container.innerHTML = '<div class="empty-state">Aucun lieu. Ajoutez-en un ci-dessus !</div>';
+                return;
+            }
+            
+            container.innerHTML = places.map(place => `
+                <div class="item-card">
+                    <div class="item-header">
+                        <div style="flex: 1;">
+                            <div class="item-title">${place.name}</div>
+                            ${place.building ? '<div class="item-info">🏢 ' + place.building + '</div>' : ''}
+                            ${place.description ? '<div class="item-info" style="margin-top: 8px;">' + place.description + '</div>' : ''}
+                            ${place.imageUrl ? '<div style="margin-top: 10px;"><img src="' + place.imageUrl + '" style="max-width: 100%; border-radius: 8px;" onerror="this.style.display=\'none\'"></div>' : ''}
+                        </div>
+                        <button class="delete-btn" onclick="deletePlace(${place.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deletePlace(id) {
+            if (confirm('Supprimer ce lieu ?')) {
+                places = places.filter(p => p.id !== id);
+                saveData();
+                displayPlaces();
+            }
+        }
+
+        // PERSONAL PROGRAM
+        document.getElementById('personalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const fullName = `${firstName} ${lastName}`;
+            
+            // Find user's groups
+            const userGroups = groups.filter(g => 
+                g.members.some(m => m.toLowerCase().includes(firstName.toLowerCase()) && m.toLowerCase().includes(lastName.toLowerCase()))
+            );
+            
+            // Find user's events
+            const userEvents = events.filter(event => {
+                // Check if user is in participants
+                const inParticipants = event.participants.some(p => 
+                    p.toLowerCase().includes(firstName.toLowerCase()) && p.toLowerCase().includes(lastName.toLowerCase())
+                );
+                
+                // Check if user is in event's group
+                const inGroup = event.group && userGroups.some(g => g.id == event.group);
+                
+                return inParticipants || inGroup || !event.group;
+            });
+            
+            const resultDiv = document.getElementById('personalResult');
+            
+            if (userEvents.length === 0) {
+                resultDiv.innerHTML = `
+                    <div class="search-result" style="background: #ffebee; border-color: #e74c3c;">
+                        <h3 style="margin-bottom: 10px;">❌ Aucun événement trouvé</h3>
+                        <p>Aucun événement n'a été trouvé pour <strong>${fullName}</strong>.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="search-result">
+                    <h3 style="margin-bottom: 15px;">✅ Programme de ${fullName}</h3>
+                    ${userGroups.length > 0 ? '<p style="margin-bottom: 15px;"><strong>Vos groupes :</strong> ' + userGroups.map(g => g.name).join(', ') + '</p>' : ''}
+                    <div class="my-events">
+                        ${userEvents.map(event => {
+                            const dateObj = new Date(event.date);
+                            const dateFormatted = dateObj.toLocaleDateString('fr-FR', { 
+                                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+                            });
+                            return `
+                                <div class="my-event">
+                                    <div style="font-weight: 600; font-size: 16px; margin-bottom: 5px;">${event.title}</div>
+                                    <div style="color: #666; font-size: 14px;">📅 ${dateFormatted} à ${event.time}</div>
+                                    ${event.location ? '<div style="color: #666; font-size: 14px;">📍 ' + event.location + '</div>' : ''}
+                                    ${event.description ? '<div style="color: #555; font-size: 14px; margin-top: 8px;">' + event.description + '</div>' : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        });
+
+        // DISPLAY ALL
+        function displayAllData() {
+            displayEvents();
+            displayGroups();
+            displayPlaces();
+        }
+
+        // START
+        init();
+    </script>
+</body>
+</html>
