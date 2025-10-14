@@ -550,341 +550,217 @@
         </div>
     </div>
 
-    <script>
-        // ==================== CONFIGURATION ====================
-        
-        const COMMON_PASSWORD = "brest2025"; // ⚠️ CHANGE ME
-        const IS_LOGGED_IN_KEY = 'internatLoggedIn';
+<script>
+    // ==================== CONFIGURATION ====================
+    const COMMON_PASSWORD = "brest2025"; // ⚠️ Mot de passe
+    const IS_LOGGED_IN_KEY = 'internatLoggedIn';
 
-        // DONNÉES À PERSONNALISER
-        const DATA = {
-            planning: [
-                { date: '2025-10-31', time: '09:00', title: 'Accueil des participants', location: 'Amphithéâtre 1', description: 'Mot de bienvenue, déroulé de la journée' },
-                { date: '2025-10-31', time: '09:30', title: 'Atelier 1', location: 'Selon les groupes'},
-                { date: '2025-10-31', time: '10:30', title: 'Atelier 2', location: 'Selon les groupes'},
-                { date: '2025-10-31', time: '11:30', title: 'Atelier 3', location: 'Selon les groupes'},
-                { date: '2025-10-31', time: '12:30', title: 'Pause Midi', location: 'Libre', description : 'Repas libre'},
-                { date: '2025-10-31', time: '14:30', title: 'Atelier 4', location: 'Selon les groupes'},
-                { date: '2025-10-31', time: '15:30', title: 'Atelier 5', location: 'Selon les groupes'},
-                { date: '2025-10-31', time: '16:30', title: 'Atelier 6', location: 'Selon les groupes'},
-                { date: '2025-10-21', time: '17:30', title: 'Pot de fin de journée', location: 'Hall Faculté de médecine', description: 'Offert par l'ABIRA' },
-                { date: '2025-10-31', time: '20:00', title: 'Soirée d'intégration', location: 'Bar le Pipeline, Rue de Siam', description: 'Soirée commune MIG 29 & ABIRA'}
-            ],
-            
-            // Les groupes sont maintenant associés directement à l'atelier
-            ateliers: {
-                1: {
-                    title: 'Sport et Bien-être',
-                    location: 'Gymnase',
-                    horaire: 'Mardi et Jeudi 16h-18h',
-                    // Distribution des membres par groupe pour cet atelier (exemple)
-                    groupes: [
-                        { name: 'Équipe Force 1', members: ['Jean Dupont', 'Marie Martin', 'Alice Girard', 'Mathis Leroy'] },
-                        { name: 'Équipe Endurance 2', members: ['Sophie Bernard', 'Lucas Petit', 'Nathan André', 'Clara Lambert'] }
-                    ]
-                },
-                2: {
-                    title: 'Arts Créatifs',
-                    location: 'Salle d\'art',
-                    horaire: 'Lundi et Mercredi 14h-16h',
-                    groupes: [
-                        { name: 'Peinture Moderne', members: ['Emma Dubois', 'Thomas Moreau', 'Léa Laurent', 'Gabriel Rousseau'] },
-                        { name: 'Sculpture Argile', members: ['Hugo Simon', 'Manon Fontaine', 'Inès Chevalier', 'Alexandre Vincent'] }
-                    ]
-                },
-                3: {
-                    title: 'Musique',
-                    location: 'Salle de musique',
-                    horaire: 'Mardi et Vendredi 17h-19h',
-                    groupes: [
-                        { name: 'Orchestre Corde', members: ['Chloé Robert', 'Maxime Richard', 'Julie Bonnet'] },
-                        { name: 'Chorale Moderne', members: ['Antoine Garnier', 'Camille Roux', 'Paul Fournier', 'Sarah Mercier'] }
-                    ]
-                },
-                4: {
-                    title: 'Théâtre',
-                    location: 'Auditorium',
-                    horaire: 'Mercredi 15h-17h',
-                    groupes: [
-                        { name: 'Improvisation', members: ['Julie Bonnet', 'Antoine Garnier', 'Camille Roux', 'Paul Fournier'] },
-                        { name: 'Comédie Classique', members: ['Sarah Mercier', 'Louis Blanc', 'Jean Dupont'] }
-                    ]
-                },
-                5: {
-                    title: 'Sciences et Technologie',
-                    location: 'Laboratoire',
-                    horaire: 'Lundi et Jeudi 15h-17h',
-                    groupes: [
-                        { name: 'Robotique Avancée', members: ['Alice Girard', 'Nathan André', 'Clara Lambert'] },
-                        { name: 'Chimie Expérimentale', members: ['Mathis Leroy', 'Emma Dubois', 'Thomas Moreau'] }
-                    ]
-                },
-                6: {
-                    title: 'Langues et Cultures',
-                    location: 'Salle polyvalente',
-                    horaire: 'Vendredi 14h-16h',
-                    groupes: [
-                        { name: 'Anglais Renforcé', members: ['Manon Fontaine', 'Gabriel Rousseau', 'Inès Chevalier'] },
-                        { name: 'Culture Japonaise', members: ['Alexandre Vincent', 'Lucas Petit', 'Léa Laurent'] }
-                    ]
-                },
-                'visite': {
-                    title: 'Visite de la ville de Brest',
-                    location: 'Rendez-vous Hall principal',
-                    horaire: 'Samedi 10h-12h',
-                    groupes: [
-                        { name: 'Groupe Visite A (Est)', members: ['Jean Dupont', 'Marie Martin', 'Sophie Bernard', 'Lucas Petit', 'Emma Dubois', 'Thomas Moreau'] },
-                        { name: 'Groupe Visite B (Ouest)', members: ['Léa Laurent', 'Hugo Simon', 'Chloé Robert', 'Maxime Richard', 'Julie Bonnet', 'Antoine Garnier'] },
-                        { name: 'Groupe Visite C (Nord)', members: ['Camille Roux', 'Paul Fournier', 'Sarah Mercier', 'Louis Blanc', 'Alice Girard', 'Nathan André'] },
-                        { name: 'Groupe Visite D (Sud)', members: ['Clara Lambert', 'Mathis Leroy', 'Manon Fontaine', 'Gabriel Rousseau', 'Inès Chevalier', 'Alexandre Vincent'] }
-                    ]
-                }
-            },
-            
-            // Les anciens 'groupes' sont désormais intégrés dans 'ateliers'
-            lieux: [
-                {
-                    name: 'Gymnase',
-                    building: 'Bâtiment Sport - Rez-de-chaussée',
-                    description: 'Équipements sportifs complets : terrains de basket, volley, matériel de fitness'
-                },
-                {
-                    name: 'Salle d\'art',
-                    building: 'Bâtiment Principal - 2ème étage',
-                    description: 'Espace créatif avec chevalets, matériel de peinture et sculpture'
-                },
-                {
-                    name: 'Bibliothèque',
-                    building: 'Bâtiment Principal - 1er étage',
-                    description: 'Espace de travail calme avec ordinateurs et ressources documentaires'
-                },
-                {
-                    name: 'Cafétéria',
-                    building: 'Bâtiment Central - Rez-de-chaussée',
-                    description: 'Service de restauration ouvert de 7h à 20h'
-                }
-            ]
-        };
+    // DONNÉES À PERSONNALISER
+    const DATA = {
+        planning: [
+            { date: '2025-10-31', time: '09:00', title: 'Accueil des participants', location: 'Amphithéâtre 1', description: 'Mot de bienvenue, déroulé de la journée' },
+            { date: '2025-10-31', time: '09:30', title: 'Atelier 1', location: 'Selon les groupes'},
+            { date: '2025-10-31', time: '10:30', title: 'Atelier 2', location: 'Selon les groupes'},
+            { date: '2025-10-31', time: '11:30', title: 'Atelier 3', location: 'Selon les groupes'},
+            { date: '2025-10-31', time: '12:30', title: 'Pause Midi', location: 'Libre', description : 'Repas libre'},
+            { date: '2025-10-31', time: '14:30', title: 'Atelier 4', location: 'Selon les groupes'},
+            { date: '2025-10-31', time: '15:30', title: 'Atelier 5', location: 'Selon les groupes'},
+            { date: '2025-10-31', time: '16:30', title: 'Atelier 6', location: 'Selon les groupes'},
+            { date: '2025-10-21', time: '17:30', title: 'Pot de fin de journée', location: 'Hall Faculté de médecine', description: "Offert par l'ABIRA" },
+            { date: '2025-10-31', time: '20:00', title: 'Soirée d\'intégration', location: 'Bar le Pipeline, Rue de Siam', description: 'Soirée commune MIG 29 & ABIRA'}
+        ],
+        ateliers: {
+            1: { title: 'Sport et Bien-être', location: 'Gymnase', horaire: 'Mardi et Jeudi 16h-18h', groupes: [ { name: 'Équipe Force 1', members: ['Jean Dupont','Marie Martin','Alice Girard','Mathis Leroy'] }, { name: 'Équipe Endurance 2', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] } ] },
+            2: { title: 'Arts Créatifs', location: 'Salle d\'art', horaire: 'Lundi et Mercredi 14h-16h', groupes: [ { name: 'Peinture Moderne', members: ['Emma Dubois','Thomas Moreau','Léa Laurent','Gabriel Rousseau'] }, { name: 'Sculpture Argile', members: ['Hugo Simon','Manon Fontaine','Inès Chevalier','Alexandre Vincent'] } ] },
+            3: { title: 'Musique', location: 'Salle de musique', horaire: 'Mardi et Vendredi 17h-19h', groupes: [ { name: 'Orchestre Corde', members: ['Chloé Robert','Maxime Richard','Julie Bonnet'] }, { name: 'Chorale Moderne', members: ['Antoine Garnier','Camille Roux','Paul Fournier','Sarah Mercier'] } ] },
+            4: { title: 'Théâtre', location: 'Auditorium', horaire: 'Mercredi 15h-17h', groupes: [ { name: 'Improvisation', members: ['Julie Bonnet','Antoine Garnier','Camille Roux','Paul Fournier'] }, { name: 'Comédie Classique', members: ['Sarah Mercier','Louis Blanc','Jean Dupont'] } ] },
+            5: { title: 'Sciences et Technologie', location: 'Laboratoire', horaire: 'Lundi et Jeudi 15h-17h', groupes: [ { name: 'Robotique Avancée', members: ['Alice Girard','Nathan André','Clara Lambert'] }, { name: 'Chimie Expérimentale', members: ['Mathis Leroy','Emma Dubois','Thomas Moreau'] } ] },
+            6: { title: 'Langues et Cultures', location: 'Salle polyvalente', horaire: 'Vendredi 14h-16h', groupes: [ { name: 'Anglais Renforcé', members: ['Manon Fontaine','Gabriel Rousseau','Inès Chevalier'] }, { name: 'Culture Japonaise', members: ['Alexandre Vincent','Lucas Petit','Léa Laurent'] } ] },
+            'visite': { title: 'Visite de la ville de Brest', location: 'Rendez-vous Hall principal', horaire: 'Samedi 10h-12h', groupes: [ { name: 'Groupe Visite A (Est)', members: ['Jean Dupont','Marie Martin','Sophie Bernard','Lucas Petit','Emma Dubois','Thomas Moreau'] }, { name: 'Groupe Visite B (Ouest)', members: ['Léa Laurent','Hugo Simon','Chloé Robert','Maxime Richard','Julie Bonnet','Antoine Garnier'] }, { name: 'Groupe Visite C (Nord)', members: ['Camille Roux','Paul Fournier','Sarah Mercier','Louis Blanc','Alice Girard','Nathan André'] }, { name: 'Groupe Visite D (Sud)', members: ['Clara Lambert','Mathis Leroy','Manon Fontaine','Gabriel Rousseau','Inès Chevalier','Alexandre Vincent'] } ] }
+        },
+        lieux: [
+            { name: 'Gymnase', building: 'Bâtiment Sport - Rez-de-chaussée', description: 'Équipements sportifs complets : terrains de basket, volley, matériel de fitness' },
+            { name: 'Salle d\'art', building: 'Bâtiment Principal - 2ème étage', description: 'Espace créatif avec chevalets, matériel de peinture et sculpture' },
+            { name: 'Bibliothèque', building: 'Bâtiment Principal - 1er étage', description: 'Espace de travail calme avec ordinateurs et ressources documentaires' },
+            { name: 'Cafétéria', building: 'Bâtiment Central - Rez-de-chaussée', description: 'Service de restauration ouvert de 7h à 20h' }
+        ]
+    };
 
-        // ==================== AUTHENTIFICATION ====================
+    // ==================== AUTHENTIFICATION ====================
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', login);
 
-        document.getElementById('loginForm').addEventListener('submit', login);
+    function login(e) {
+        e.preventDefault();
+        const passwordInput = document.getElementById('passwordInput');
+        const loginError = document.getElementById('loginError');
 
-        function login(e) {
-            e.preventDefault();
-            const passwordInput = document.getElementById('passwordInput');
-            const loginError = document.getElementById('loginError');
+        if (passwordInput.value.trim() === COMMON_PASSWORD) { // 🔑 trim ajouté
+            localStorage.setItem(IS_LOGGED_IN_KEY, 'true');
+            showApp();
+        } else {
+            loginError.style.display = 'block';
+            passwordInput.value = '';
+        }
+    }
 
-            if (passwordInput.value === COMMON_PASSWORD) {
-                localStorage.setItem(IS_LOGGED_IN_KEY, 'true');
-                showApp();
-            } else {
-                loginError.style.display = 'block';
-                passwordInput.value = '';
-            }
+    function logout() {
+        localStorage.removeItem(IS_LOGGED_IN_KEY);
+        document.getElementById('appContainer').style.display = 'none';
+        document.getElementById('loginContainer').style.display = 'flex';
+        document.getElementById('loginError').style.display = 'none';
+    }
+
+    function showApp() {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('appContainer').style.display = 'block';
+        document.getElementById('loginError').style.display = 'none';
+        loadAllData();
+    }
+
+    function init() {
+        if (localStorage.getItem(IS_LOGGED_IN_KEY) === 'true') {
+            showApp();
+        } else {
+            logout();
+        }
+    }
+
+    // ==================== NAVIGATION ====================
+    function showPage(pageName, event) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+        document.getElementById(pageName + 'Page').classList.add('active');
+
+        if (event && event.target) {
+            event.target.classList.add('active');
+        } else {
+            const btn = document.querySelector(`.nav-btn[onclick*="${pageName}"]`);
+            if (btn) btn.classList.add('active');
         }
 
-        function logout() {
-            localStorage.removeItem(IS_LOGGED_IN_KEY);
-            document.getElementById('appContainer').style.display = 'none';
-            document.getElementById('loginContainer').style.display = 'flex';
-            document.getElementById('loginError').style.display = 'none';
-        }
+        if (pageName === 'ateliers') showTab(1);
+    }
 
-        function showApp() {
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'block';
-            document.getElementById('loginError').style.display = 'none';
-            loadAllData();
-        }
+    function showTab(tabIdentifier, event) {
+        document.querySelectorAll('#ateliersPage .tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('#ateliersPage .tab-content').forEach(c => c.classList.remove('active'));
 
-        function init() {
-            if (localStorage.getItem(IS_LOGGED_IN_KEY) === 'true') {
-                showApp();
-            } else {
-                logout();
-            }
-        }
-        
-        // ==================== NAVIGATION ====================
-        function showPage(pageName, event) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById(pageName + 'Page').classList.add('active');
-            
-            if (event && event.target) {
-                event.target.classList.add('active');
-            } else {
-                document.querySelector(`.nav-btn[onclick*="${pageName}"]`).classList.add('active');
-            }
-            // S'assurer que le premier onglet d'Ateliers est actif si on vient d'y naviguer
-            if (pageName === 'ateliers') {
-                showTab(1);
-            }
-        }
+        const tabButton = event ? event.target : document.querySelector(`.tab-btn[onclick*="showTab(${tabIdentifier}"]`);
+        const contentId = 'atelier' + tabIdentifier;
+        if (tabButton) tabButton.classList.add('active');
+        const contentDiv = document.getElementById(contentId);
+        if (contentDiv) contentDiv.classList.add('active');
+    }
 
-        function showTab(tabIdentifier, event) {
-            document.querySelectorAll('#ateliersPage .tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('#ateliersPage .tab-content').forEach(c => c.classList.remove('active'));
-            
-            const tabButton = event ? event.target : document.querySelector(`.tab-btn[onclick*="showTab(${tabIdentifier}"]`);
-            const contentId = 'atelier' + tabIdentifier;
+    // ==================== LOAD DATA ====================
+    function loadAllData() {
+        loadPlanning();
+        loadAteliers();
+        loadPlan();
+        showPage('planning');
+    }
 
-            if (tabButton) {
-                tabButton.classList.add('active');
-            }
-            document.getElementById(contentId).classList.add('active');
-        }
-
-        // ==================== LOAD DATA ====================
-        function loadAllData() {
-            loadPlanning();
-            loadAteliers(); // Nouvelle implémentation
-            loadPlan();
-            showPage('planning'); 
-        }
-
-        function loadPlanning() {
-             // Implémentation de loadPlanning (inchangée)
-            const container = document.getElementById('planningContent');
-            container.innerHTML = DATA.planning.map(event => {
-                const dateObj = new Date(event.date);
-                const dateFormatted = dateObj.toLocaleDateString('fr-FR', { 
-                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-                });
-                return `
-                    <div class="content-section">
+    function loadPlanning() {
+        const container = document.getElementById('planningContent');
+        container.innerHTML = DATA.planning.map(event => {
+            const dateObj = new Date(event.date);
+            const dateFormatted = dateObj.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            return `<div class="content-section">
                         <h3>${event.title}</h3>
                         <p><strong>📅 Date :</strong> ${dateFormatted} à ${event.time}</p>
                         <p><strong>📍 Lieu :</strong> ${event.location}</p>
-                        <p>${event.description}</p>
-                    </div>
-                `;
-            }).join('');
-        }
+                        <p>${event.description || ''}</p>
+                    </div>`;
+        }).join('');
+    }
 
-        function loadAteliers() {
-            const atelierKeys = Object.keys(DATA.ateliers);
+    function loadAteliers() {
+        Object.keys(DATA.ateliers).forEach(key => {
+            const atelier = DATA.ateliers[key];
+            const container = document.getElementById('atelier' + key);
+            if (!container) return;
 
-            atelierKeys.forEach(key => {
-                const atelier = DATA.ateliers[key];
-                const container = document.getElementById('atelier' + key);
-                
-                if (!container) return; // Sécurité si l'ID n'existe pas
+            let html = `<div class="content-section" style="border-left-color: #2d2654;">
+                            <h3>${atelier.title}</h3>
+                            <p><strong>📍 Lieu :</strong> ${atelier.location}</p>
+                            <p><strong>🕐 Horaires :</strong> ${atelier.horaire}</p>
+                        </div>
+                        <h3 class="page-title" style="font-size: 24px; border-bottom: none; margin-top: 30px;">Composition des Groupes</h3>
+                        <div class="groups-grid">`;
 
-                // Section d'informations générale de l'atelier
-                let htmlContent = `
-                    <div class="content-section" style="border-left-color: #2d2654;">
-                        <h3>${atelier.title}</h3>
-                        <p><strong>📍 Lieu :</strong> ${atelier.location}</p>
-                        <p><strong>🕐 Horaires :</strong> ${atelier.horaire}</p>
-                    </div>
-                    <h3 class="page-title" style="font-size: 24px; border-bottom: none; margin-top: 30px;">Composition des Groupes</h3>
-                    <div class="groups-grid">
-                `;
+            html += atelier.groupes.map(g => `<div class="group-card">
+                        <h4>${g.name}</h4>
+                        <ul>${g.members.map(m => `<li>${m}</li>`).join('')}</ul>
+                    </div>`).join('');
 
-                // Ajout des cartes de groupe
-                htmlContent += atelier.groupes.map(groupe => `
-                    <div class="group-card">
-                        <h4>${groupe.name}</h4>
-                        <ul>
-                            ${groupe.members.map(member => `<li>${member}</li>`).join('')}
-                        </ul>
-                    </div>
-                `).join('');
+            html += '</div>';
+            container.innerHTML = html;
+        });
+    }
 
-                htmlContent += '</div>';
-                container.innerHTML = htmlContent;
+    function loadPlan() {
+        const container = document.getElementById('planContent');
+        container.innerHTML = DATA.lieux.map(lieu => `<div class="content-section">
+                        <h3>${lieu.name}</h3>
+                        <p><strong>🏢 Localisation :</strong> ${lieu.building}</p>
+                        <p>${lieu.description}</p>
+                    </div>`).join('');
+    }
+
+    // ==================== PERSONAL PROGRAM ====================
+    document.getElementById('personalForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const fullName = `${firstName} ${lastName}`;
+        const personalResult = document.getElementById('personalResult');
+        personalResult.innerHTML = '';
+
+        const userPrograms = [];
+        let isUserFound = false;
+
+        Object.keys(DATA.ateliers).forEach(key => {
+            const atelier = DATA.ateliers[key];
+            atelier.groupes.forEach(g => {
+                if (g.members.some(m => m.toLowerCase() === fullName.toLowerCase())) {
+                    isUserFound = true;
+                    userPrograms.push({ title: atelier.title, groupeName: g.name, horaire: atelier.horaire, location: atelier.location });
+                }
             });
-        }
-        
-        // Ancienne fonction loadGroupes est supprimée
-        
-        function loadPlan() {
-            // Implémentation de loadPlan (inchangée)
-            const container = document.getElementById('planContent');
-            container.innerHTML = DATA.lieux.map(lieu => `
-                <div class="content-section">
-                    <h3>${lieu.name}</h3>
-                    <p><strong>🏢 Localisation :</strong> ${lieu.building}</p>
-                    <p>${lieu.description}</p>
-                </div>
-            `).join('');
-        }
-
-        // ==================== PERSONAL PROGRAM ====================
-        
-        document.getElementById('personalForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const firstName = document.getElementById('firstName').value.trim();
-            const lastName = document.getElementById('lastName').value.trim();
-            const fullName = `${firstName} ${lastName}`;
-            
-            const personalResult = document.getElementById('personalResult');
-            personalResult.innerHTML = ''; 
-
-            const userPrograms = [];
-            let isUserFound = false;
-
-            // Trouver les ateliers de l'utilisateur (inclut maintenant la visite)
-            Object.keys(DATA.ateliers).forEach(key => {
-                const atelier = DATA.ateliers[key];
-                atelier.groupes.forEach(groupe => {
-                    if (groupe.members.some(member => member.toLowerCase() === fullName.toLowerCase())) {
-                        isUserFound = true;
-                        userPrograms.push({
-                            title: atelier.title,
-                            groupeName: groupe.name,
-                            horaire: atelier.horaire,
-                            location: atelier.location
-                        });
-                    }
-                });
-            });
-
-
-            if (isUserFound) {
-                let resultHtml = `<div class="search-result">
-                                    <div class="result-title">Programme de ${fullName}</div>`;
-
-                userPrograms.forEach(program => {
-                    const programType = program.title.includes('Visite') ? 'Visite' : 'Atelier';
-                    const color = programType === 'Visite' ? '#3b9fc9' : '#2d2654';
-
-                    resultHtml += `<div class="program-item" style="border-left-color: ${color};">
-                                        <div class="program-title">
-                                            ${programType === 'Visite' ? '🗺️ ' : '🎨 '} ${program.title}
-                                        </div>
-                                        <div class="program-info"><strong>Groupe :</strong> ${program.groupeName}</div>
-                                        <div class="program-info"><strong>Horaires :</strong> ${program.horaire}</div>
-                                        <div class="program-info"><strong>Lieu :</strong> ${program.location}</div>
-                                    </div>`;
-                });
-                
-                resultHtml += `</div>`;
-                personalResult.innerHTML = resultHtml;
-
-            } else {
-                personalResult.innerHTML = `<div class="info-box" style="border-color: #e74c3c; background: #fbecec; color: #c0392b;">
-                                            ⚠️ <strong>Aucun programme trouvé</strong> pour ${fullName}. Vérifiez l'orthographe ou contactez l'administration.
-                                        </div>`;
-            }
         });
 
-        // ==================== CONTACT FORM (Non modifiée) ====================
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const successDiv = document.getElementById('contactSuccess');
-            successDiv.innerHTML = '<div class="success-message">✅ Votre message a été envoyé avec succès ! Nous vous recontacterons sous peu.</div>';
-            document.getElementById('contactForm').reset();
-            setTimeout(() => successDiv.innerHTML = '', 5000); // Clear message after 5 seconds
-        });
+        if (isUserFound) {
+            let html = `<div class="search-result"><div class="result-title">Programme de ${fullName}</div>`;
+            userPrograms.forEach(p => {
+                const type = p.title.includes('Visite') ? 'Visite' : 'Atelier';
+                const color = type === 'Visite' ? '#3b9fc9' : '#2d2654';
+                html += `<div class="program-item" style="border-left-color:${color};">
+                            <div class="program-title">${type === 'Visite' ? '🗺️ ' : '🎨 '}${p.title}</div>
+                            <div class="program-info"><strong>Groupe :</strong> ${p.groupeName}</div>
+                            <div class="program-info"><strong>Horaires :</strong> ${p.horaire}</div>
+                            <div class="program-info"><strong>Lieu :</strong> ${p.location}</div>
+                        </div>`;
+            });
+            html += `</div>`;
+            personalResult.innerHTML = html;
+        } else {
+            personalResult.innerHTML = `<div class="info-box" style="border-color:#e74c3c; background:#fbecec; color:#c0392b;">
+                                        ⚠️ <strong>Aucun programme trouvé</strong> pour ${fullName}. Vérifiez l'orthographe ou contactez l'administration.
+                                      </div>`;
+        }
+    });
 
+    // ==================== CONTACT FORM ====================
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const successDiv = document.getElementById('contactSuccess');
+        successDiv.innerHTML = '<div class="success-message">✅ Votre message a été envoyé avec succès ! Nous vous recontacterons sous peu.</div>';
+        document.getElementById('contactForm').reset();
+        setTimeout(() => successDiv.innerHTML = '', 5000);
+    });
 
-        // ==================== INITIALISATION ====================
-        window.onload = init;
-    </script>
-</body>
-</html>
+    // ==================== INITIALISATION ====================
+    window.onload = init;
+</script>
