@@ -17,78 +17,7 @@
             min-height: 100vh;
         }
         
-        /* LOGIN PAGE */
-        .login-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .login-box {
-            background: white;
-            padding: 50px 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 450px;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .logo {
-            max-width: 280px;
-            margin-bottom: 30px;
-        }
-        
-        .login-box h1 {
-            color: #2d2654;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #3b9fc9;
-            box-shadow: 0 0 0 3px rgba(59, 159, 201, 0.1);
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #2d2654 0%, #3b9fc9 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(45, 38, 84, 0.3);
-        }
-        
-        .error {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 15px;
-        }
+       
         
         /* MAIN APP */
         .app-container {
@@ -403,21 +332,7 @@
     </style>
 </head>
 <body>
-    <!-- LOGIN PAGE -->
-    <div class="login-container" id="loginPage">
-        <div class="login-box">
-            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 600'%3E%3Ccircle cx='400' cy='150' r='80' fill='%232d2654'/%3E%3Cpath d='M 250 200 Q 300 250 400 230 Q 500 210 550 180' fill='%233b9fc9' stroke='none'/%3E%3Cpath d='M 320 300 L 480 300 L 500 450 Q 400 480 300 450 Z' fill='%232d2654'/%3E%3Ctext x='400' y='520' font-family='Arial' font-size='60' font-weight='bold' text-anchor='middle' fill='%233b9fc9'%3EINTERNAT%3C/text%3E%3Ctext x='400' y='575' font-family='Arial' font-size='80' font-weight='bold' text-anchor='middle' fill='%232d2654'%3EBREST%3C/text%3E%3Cpath d='M 200 450 L 250 380 L 300 450 Z' fill='%232d2654'/%3E%3Cpath d='M 500 450 L 550 380 L 600 450 Z' fill='%232d2654'/%3E%3Cpath d='M 250 500 Q 400 520 550 500' stroke='%233b9fc9' stroke-width='15' fill='none'/%3E%3C/svg%3E" alt="Logo Internat Brest" class="logo">
-            <h1>Accès à l'Internat</h1>
-            <form id="loginForm">
-                <div class="form-group">
-                    <input type="password" id="accessKey" placeholder="Clé d'accès" required>
-                </div>
-                <button type="submit" class="btn">Se connecter</button>
-                <div id="errorMessage" class="error"></div>
-            </form>
-        </div>
-    </div>
-
+    
     <!-- MAIN APP -->
     <div class="app-container" id="appContainer">
         <nav class="navbar">
@@ -536,7 +451,6 @@
 
     <script>
         // ==================== CONFIGURATION ====================
-        const ACCESS_KEY = 'Test';
         
         // DONNÉES À PERSONNALISER
         const DATA = {
@@ -633,42 +547,7 @@
             ]
         };
 
-        // ==================== AUTHENTICATION ====================
-        let isAuthenticated = false;
-
-        function checkAuth() {
-            const auth = sessionStorage.getItem('authenticated');
-            if (auth === 'true') {
-                isAuthenticated = true;
-                showApp();
-            }
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const key = document.getElementById('accessKey').value;
-            const errorMsg = document.getElementById('errorMessage');
-            
-            if (key === ACCESS_KEY) {
-                sessionStorage.setItem('authenticated', 'true');
-                isAuthenticated = true;
-                errorMsg.textContent = '';
-                showApp();
-            } else {
-                errorMsg.textContent = 'Clé d\'accès incorrecte';
-            }
-        });
-
-        function showApp() {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'block';
-            loadAllData();
-        }
-
-        function logout() {
-            sessionStorage.removeItem('authenticated');
-            location.reload();
-        }
+        
 
         // ==================== NAVIGATION ====================
         function showPage(pageName) {
