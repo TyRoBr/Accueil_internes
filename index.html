@@ -537,33 +537,15 @@
                 <h1 class="page-title">📧 Contact</h1>
                 
                 <div class="contact-form">
-                    <h3>Un problème ? Contactez-nous</h3>
-                    <form id="contactForm">
-                        <div class="form-field">
-                            <label>Nom complet</label>
-                            <input type="text" id="contactName" required>
-                        </div>
-                        <div class="form-field">
-                            <label>Email</label>
-                            <input type="email" id="contactEmail" required>
-                        </div>
-                        <div class="form-field">
-                            <label>Sujet</label>
-                            <input type="text" id="contactSubject" required>
-                        </div>
-                        <div class="form-field">
-                            <label>Message</label>
-                            <textarea id="contactMessage" required></textarea>
-                        </div>
-                        <button type="submit" class="btn">Envoyer</button>
-                    </form>
-                    <div id="contactSuccess"></div>
-                </div>
-                
-                <div class="info-box" style="margin-top: 30px;">
-                    📞 <strong>Autres moyens de contact :</strong><br>
-                    Téléphone : XX XX XX XX XX<br>
-                    Email : contact@internat-brest.fr
+                    <h3>Comment nous joindre ?</h3>
+                    <div class="content-section">
+                        <p><strong>📞 Téléphone :</strong> XX XX XX XX XX</p>
+                        <p><strong>✉️ Email :</strong> contact@internat-brest.fr</p>
+                        <p><strong>📍 Adresse :</strong> Faculté de Médecine, 22 Avenue Camille Desmoulins, 29200 Brest</p>
+                    </div>
+                    <div class="info-box">
+                        💡 <strong>Information :</strong> Pour toute question ou problème, n'hésitez pas à nous contacter par email ou téléphone.
+                    </div>
                 </div>
             </div>
         </div>
@@ -751,20 +733,24 @@
         const fullName = `${firstName} ${lastName}`;
         const personalResult = document.getElementById('personalResult');
         personalResult.innerHTML = '';
-
         const userPrograms = [];
         let isUserFound = false;
-
+        
         Object.keys(DATA.ateliers).forEach(key => {
             const atelier = DATA.ateliers[key];
             atelier.groupes.forEach(g => {
                 if (g.members.some(m => m.toLowerCase() === fullName.toLowerCase())) {
                     isUserFound = true;
-                    userPrograms.push({ title: atelier.title, groupeName: g.name, horaire: atelier.horaire, location: atelier.location });
+                    userPrograms.push({
+                        title: atelier.title,
+                        groupeName: g.name,
+                        horaire: atelier.horaire,
+                        location: g.location || atelier.location // Utilise le lieu du groupe, sinon celui de l'atelier
+                        });
                 }
             });
         });
-
+        
         if (isUserFound) {
             let html = `<div class="search-result"><div class="result-title">Programme de ${fullName}</div>`;
             userPrograms.forEach(p => {
@@ -774,7 +760,7 @@
                             <div class="program-title">${type === 'Visite' ? '🗺️ ' : '🎨 '}${p.title}</div>
                             <div class="program-info"><strong>Groupe :</strong> ${p.groupeName}</div>
                             <div class="program-info"><strong>Horaires :</strong> ${p.horaire}</div>
-                            <div class="program-info"><strong>Lieu :</strong> ${p.location}</div>
+                            <div class="program-info"><strong>Lieu :</strong> ${p.location || 'À définir'}</div>
                         </div>`;
             });
             html += `</div>`;
@@ -782,7 +768,7 @@
         } else {
             personalResult.innerHTML = `<div class="info-box" style="border-color:#e74c3c; background:#fbecec; color:#c0392b;">
                                         ⚠️ <strong>Aucun programme trouvé</strong> pour ${fullName}. Vérifiez l'orthographe ou contactez l'administration.
-                                      </div>`;
+                                        </div>`;
         }
     });
 
