@@ -718,7 +718,6 @@
 
             let html = `<div class="content-section" style="border-left-color: #2d2654;">
                             <h3>${atelier.title}</h3>
-                            <p><strong>📍 Lieu :</strong> ${atelier.location}</p>
                             <p><strong>🕐 Horaires :</strong> ${atelier.horaire}</p>
                         </div>
                         <h3 class="page-title" style="font-size: 24px; border-bottom: none; margin-top: 30px;">Composition des Groupes</h3>
@@ -726,6 +725,7 @@
 
             html += atelier.groupes.map(g => `<div class="group-card">
                         <h4>${g.name}</h4>
+                        ${g.location ? `<p style="color: #3b9fc9; font-weight: 600; margin-bottom: 10px;">📍 ${g.location}</p>` : ''}
                         <ul>${g.members.map(m => `<li>${m}</li>`).join('')}</ul>
                     </div>`).join('');
 
