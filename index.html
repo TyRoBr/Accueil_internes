@@ -11,13 +11,13 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #2d2654 0%, #3b9fc9 100%);
             min-height: 100vh;
         }
-        
+
         /* Bouton Global */
         .btn {
             padding: 12px 24px;
@@ -30,7 +30,7 @@
             transition: all 0.3s;
             font-size: 16px;
         }
-        
+
         .btn:hover {
             background: #3b9fc9;
         }
@@ -89,13 +89,13 @@
             display: none;
             min-height: 100vh;
         }
-        
+
         .navbar {
             background: white;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             padding: 0;
         }
-        
+
         .navbar-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -104,24 +104,24 @@
             align-items: center;
             padding: 20px 30px;
         }
-        
+
         .navbar-brand {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        
+
         .navbar-logo {
             height: 60px;
         }
-        
+
         .navbar-menu {
             display: flex;
             gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
-        
+
         .nav-btn {
             padding: 12px 24px;
             background: transparent;
@@ -133,26 +133,26 @@
             transition: all 0.3s;
             font-size: 15px;
         }
-        
+
         .nav-btn:hover {
             background: #f0f0f0;
         }
-        
+
         .nav-btn.active {
             background: linear-gradient(135deg, #2d2654 0%, #3b9fc9 100%);
             color: white;
         }
-        
+
         .logout-btn {
             margin-left: 15px;
         }
-        
+
         .content {
             max-width: 1400px;
             margin: 40px auto;
             padding: 0 30px;
         }
-        
+
         .page {
             display: none;
             background: white;
@@ -160,11 +160,11 @@
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
-        
+
         .page.active {
             display: block;
         }
-        
+
         .page-title {
             color: #2d2654;
             margin-bottom: 30px;
@@ -172,7 +172,7 @@
             border-bottom: 4px solid #3b9fc9;
             padding-bottom: 15px;
         }
-        
+
         /* TABS */
         .tabs {
             display: flex;
@@ -180,7 +180,7 @@
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
-        
+
         .tab-btn {
             padding: 15px 30px;
             background: #f5f5f5;
@@ -192,26 +192,26 @@
             font-size: 16px;
             transition: all 0.3s;
         }
-        
+
         .tab-btn:hover {
             background: #e8e8e8;
         }
-        
+
         .tab-btn.active {
             background: linear-gradient(135deg, #2d2654 0%, #3b9fc9 100%);
             color: white;
             border-color: #2d2654;
         }
-        
+
         .tab-content {
             display: none;
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
-        /* CONTENT SECTIONS (pour Planning, Plan) */
+
+        /* CONTENT SECTIONS */
         .content-section {
             background: #f8f9fa;
             padding: 30px;
@@ -219,19 +219,19 @@
             margin-bottom: 25px;
             border-left: 5px solid #3b9fc9;
         }
-        
+
         .content-section h3 {
             color: #2d2654;
             margin-bottom: 15px;
             font-size: 22px;
         }
-        
+
         .content-section p {
             color: #555;
             line-height: 1.8;
             font-size: 15px;
         }
-        
+
         /* GROUPE / ATELIER CARD */
         .groups-grid {
             display: grid;
@@ -241,7 +241,7 @@
         }
 
         .group-card {
-            background: #f0f8ff; /* Couleur de fond plus claire */
+            background: #f0f8ff;
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -275,7 +275,73 @@
             border-bottom: 1px dotted #e0e0e0;
             font-size: 15px;
         }
-        
+
+        /* Page d'accueil */
+        .welcome-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .welcome-text {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #3b9fc9;
+        }
+
+        .welcome-text h2 {
+            color: #2d2654;
+            margin-bottom: 20px;
+        }
+
+        #customWelcomeText {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .logos-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #3b9fc9;
+        }
+
+        .logos-section h3 {
+            color: #2d2654;
+            margin-bottom: 20px;
+        }
+
+        .logos-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            align-items: center;
+        }
+
+        .partner-logo {
+            max-height: 100px;
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.3s;
+        }
+
+        .partner-logo:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .logos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         /* Le reste des styles (Personal, Contact) reste le même */
         .participants-list {
             display: grid;
@@ -283,7 +349,7 @@
             gap: 10px;
             margin-top: 20px;
         }
-        
+
         .participant-item {
             background: white;
             padding: 12px 15px;
@@ -292,28 +358,28 @@
             font-size: 14px;
             color: #2d2654;
         }
-        
+
         .personal-search {
             background: linear-gradient(135deg, #2d265415 0%, #3b9fc915 100%);
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
         }
-        
+
         .search-form {
             display: grid;
             grid-template-columns: 1fr 1fr auto;
             gap: 15px;
             align-items: end;
         }
-        
+
         .search-form input {
             padding: 15px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 16px;
         }
-        
+
         .search-result {
             background: #e8f5e9;
             border: 2px solid #4caf50;
@@ -321,14 +387,14 @@
             border-radius: 15px;
             margin-top: 25px;
         }
-        
+
         .result-title {
             color: #2d2654;
             font-size: 24px;
             margin-bottom: 20px;
             font-weight: 700;
         }
-        
+
         .program-item {
             background: white;
             padding: 20px;
@@ -336,43 +402,43 @@
             margin-bottom: 15px;
             border-left: 4px solid #3b9fc9;
         }
-        
+
         .program-title {
             font-size: 18px;
             font-weight: 600;
             color: #2d2654;
             margin-bottom: 8px;
         }
-        
+
         .program-info {
             color: #666;
             font-size: 14px;
             margin-bottom: 5px;
         }
-        
+
         .contact-form {
             background: #f8f9fa;
             padding: 30px;
             border-radius: 15px;
         }
-        
+
         .contact-form h3 {
             color: #2d2654;
             margin-bottom: 20px;
             font-size: 22px;
         }
-        
+
         .form-field {
             margin-bottom: 20px;
         }
-        
+
         .form-field label {
             display: block;
             margin-bottom: 8px;
             color: #2d2654;
             font-weight: 600;
         }
-        
+
         .form-field input,
         .form-field textarea {
             width: 100%;
@@ -382,12 +448,12 @@
             font-size: 15px;
             font-family: inherit;
         }
-        
+
         .form-field textarea {
             resize: vertical;
             min-height: 120px;
         }
-        
+
         .success-message {
             background: #d4edda;
             color: #155724;
@@ -396,7 +462,7 @@
             margin-top: 20px;
             border: 2px solid #c3e6cb;
         }
-        
+
         .info-box {
             background: #fff3cd;
             border: 2px solid #ffc107;
@@ -405,43 +471,48 @@
             margin-top: 25px;
             color: #856404;
         }
-        .login-logo-container{
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin: 0 auto 20px;
-                width: 80 %;
-                max-width: 200 px;
-                height: auto;
-                padding: 10px 0;
-            }
-            .login-logo{
-                height: auto;
-                max-height: 80px;
-                width: 100%;
-                object-fit: contain;
-            }
-        
+
+        .login-logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            width: 80%;
+            max-width: 200px;
+            height: auto;
+            padding: 10px 0;
+        }
+
+        .login-logo {
+            height: auto;
+            max-height: 80px;
+            width: 100%;
+            object-fit: contain;
+        }
+
         @media (max-width: 768px) {
             .search-form {
                 grid-template-columns: 1fr;
             }
-            
+
             .navbar-menu {
                 gap: 5px;
             }
-            
+
             .nav-btn {
                 padding: 10px 15px;
                 font-size: 13px;
             }
+
             .navbar-content {
                 flex-direction: column;
                 align-items: flex-start;
             }
+
             .navbar-menu {
                 margin-top: 15px;
             }
+
             .logout-btn {
                 margin-left: 0;
                 margin-top: 10px;
@@ -450,11 +521,11 @@
     </style>
 </head>
 <body>
-    
+
     <div class="login-container" id="loginContainer">
         <div class="login-box">
             <div class="login-logo-container">
-                <img src="images/logo.jpg" alt = "Logo" class="login-logo">
+                <img src="images/logo.jpg" alt="Logo" class="login-logo">
             </div>
             <h2>🔐 Accès Internat Brest</h2>
             <form id="loginForm">
@@ -464,7 +535,7 @@
             </form>
         </div>
     </div>
-    
+
     <div class="app-container" id="appContainer">
         <nav class="navbar">
             <div class="navbar-content">
@@ -472,7 +543,8 @@
                     <img src="images/logo.jpg" alt="Logo" class="navbar-logo">
                 </div>
                 <div class="navbar-menu">
-                    <button class="nav-btn active" onclick="showPage('planning', event)">Planning</button>
+                    <button class="nav-btn active" onclick="showPage('home', event)">Accueil</button>
+                    <button class="nav-btn" onclick="showPage('planning', event)">Planning</button>
                     <button class="nav-btn" onclick="showPage('ateliers', event)">Ateliers/Groupes</button>
                     <button class="nav-btn" onclick="showPage('plan', event)">Plan</button>
                     <button class="nav-btn" onclick="showPage('personal', event)">Mon Programme</button>
@@ -483,14 +555,36 @@
         </nav>
 
         <div class="content">
-            <div id="planningPage" class="page active">
+            <div id="homePage" class="page active">
+                <h1 class="page-title">🏠 Accueil</h1>
+                <div class="welcome-section">
+                    <div class="welcome-text">
+                        <h2>Bienvenue à l'Internat de Brest !</h2>
+                        <h3>Vous trouverez sur ce site toutes les informations relatives à la journée d'accueil.<br>
+                            N'hésitez pas à parcourir les différents onglets ou à saisir vos noms dans l'onglet "Mon programme".<br>
+                            Au plaisir de vous renconter,<br>
+                            L'association des internes                            
+                        </h3>
+                    </div>
+                    <div class="logos-section">
+                        <h3>Nos Partenaires</h3>
+                        <div class="logos-grid">
+                            <img src="images/logo.jpg" alt="Logo ABIRA" class="partner-logo">
+                            <img src="images/logo-UBO.png" alt="Logo UBO" class="partner-logo">
+                            <img src="images/logo_CHU.png" alt="Logo CHU" class="partner-logo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="planningPage" class="page">
                 <h1 class="page-title">📅 Planning Général</h1>
                 <div id="planningContent"></div>
             </div>
 
             <div id="ateliersPage" class="page">
                 <h1 class="page-title">🎨 Ateliers & Groupes</h1>
-                
+
                 <div class="tabs">
                     <button class="tab-btn active" onclick="showTab(1, event)">Atelier 1: 09h30</button>
                     <button class="tab-btn" onclick="showTab(2, event)">Atelier 2: 10h30</button>
@@ -500,14 +594,15 @@
                     <button class="tab-btn" onclick="showTab(6, event)">Atelier 6: 16h30</button>
                     <button class="tab-btn" onclick="showTab('visite', event)">Visite des sites</button>
                 </div>
-                
+
                 <div id="atelier1" class="tab-content active"></div>
                 <div id="atelier2" class="tab-content"></div>
                 <div id="atelier3" class="tab-content"></div>
                 <div id="atelier4" class="tab-content"></div>
                 <div id="atelier5" class="tab-content"></div>
                 <div id="atelier6" class="tab-content"></div>
-                <div id="ateliervisite" class="tab-content"></div> </div>
+                <div id="ateliervisite" class="tab-content"></div>
+            </div>
 
             <div id="planPage" class="page">
                 <h1 class="page-title">🗺️ Plan des Lieux</h1>
@@ -516,7 +611,7 @@
 
             <div id="personalPage" class="page">
                 <h1 class="page-title">👤 Mon Programme Personnalisé</h1>
-                
+
                 <div class="personal-search">
                     <h3 style="color: #2d2654; margin-bottom: 20px; font-size: 22px;">Rechercher mon programme</h3>
                     <form id="personalForm" class="search-form">
@@ -524,10 +619,10 @@
                         <input type="text" id="lastName" placeholder="Nom" required>
                         <button type="submit" class="btn" style="width: auto; padding: 15px 40px;">Rechercher</button>
                     </form>
-                    
+
                     <div id="personalResult"></div>
                 </div>
-                
+
                 <div class="info-box">
                     💡 <strong>Information :</strong> Entrez votre prénom et nom pour consulter votre programme personnalisé incluant vos ateliers et activités.
                 </div>
@@ -535,12 +630,11 @@
 
             <div id="contactPage" class="page">
                 <h1 class="page-title">📧 Contact</h1>
-                
+
                 <div class="contact-form">
                     <h3>Comment nous joindre ?</h3>
                     <div class="content-section">
-                        <p><strong>📞 Téléphone :</strong> XX XX XX XX XX</p>
-                        <p><strong>✉️ Email :</strong> contact@internat-brest.fr</p>
+                        <p><strong>✉️ Email :</strong> r.tymen@gmail.com</p>
                         <p><strong>📍 Adresse :</strong> Faculté de Médecine, 22 Avenue Camille Desmoulins, 29200 Brest</p>
                     </div>
                     <div class="info-box">
@@ -568,22 +662,29 @@
             { date: '2025-10-31', time: '15:30', title: 'Atelier 5', location: 'Selon les groupes'},
             { date: '2025-10-31', time: '16:30', title: 'Atelier 6', location: 'Selon les groupes'},
             { date: '2025-10-31', time: '17:30', title: 'Pot de fin de journée', location: 'Hall Faculté de médecine', description: "Offert par l'ABIRA" },
-            { date: '2025-10-31', time: '20:00', title: 'Soirée d\'intégration', location: 'Bar le Pipeline, Rue de Siam', description: 'Soirée commune MIG 29 & ABIRA'}
+            { date: '2025-10-31', time: '20:00', title: 'Soirée d\'intégration', location: 'Bar le Pipeline, Rue de Siam', description: 'Soirée commune MIG 29 & ABIRA'},
+            { date: '2025-10-31', time: '00:00', title: 'Tonus', location: 'Internat Morvan', description: 'Thème Halloween, inscription obligatoire'}
         ],
         ateliers: {
-            1: { title: "09h30", horaire: "09h30 - 10h15", groupes: [ { name: "Transfusion", members: ["Berrezai Julie", "Boullot Lisa", "Brocard Eloise", "Calvez Laetitia", "Caouissin Morwena", "Claeysen Marie-Madeleine", "Claudel Thicoipe Salome", "Damevin Clementine", "Dehenry Maxime", "Gornitzka Pauline", "Guichaoua Théo", "Le Guellec Elsa", "Paganini Laetitia", "Tapin Gabrielle", "Vrignaud Célia"] }, { name: "Parcours Patient", members: ["Aigle Isaline", "Berehouc Coline", "Boscher Jeanne", "Du Crest de Villeneuve Eleonore", "Fournier Nathan", "Huchette Emile", "Jegourel Alice", "Joomaye Zakir", "Larmet Julia", "Le Nan Mareva", "Le Pouliquen Elsa", "Merot Jeanne", "Morin Baptiste", "Pignarre Baptiste", "Roche Benoit", "Tironneau Marie"] }, { name: "Prescription et Sortie", members: ["Barras Gaspard", "Barre Katell", "Busunt Harry", "Cillard Rozenn", "Etcheverry Clara", "Lamy Romain", "Laurier Victor", "Le Berrigaud Jade", "Le Mer Noella", "Lesne Clemence", "Piris Axel", "Prigent Nicolas", "Quenet Clementine", "Radet Lolita", "Sancho Remi", "Vincent Laurine"] }, { name: "Gestion de l\'urgence", members: ["Bremand Baptiste", "Cardona Marie", "Charpentier Emma", "Clavier Julie", "Crenn Salome", "Delbey Emma", "Dubois Julien", "Girard Maiwenn", "Gourmelen Cecile", "Hamon Louise", "Lebaron Adrien", "Plets Alice", "Pocher Mathilde", "Senechal Mareva", "Vandamme Axelle"] }, { name: "Sonde Nasogastrique", members: ["Boscher Jeanne", "El Khilal Emma", "Gerard Chloe", "Gras Gachignard Titouan", "Guillemot Pierre-Marie", "Hiette-Regnault Eleonore", "Maaroufi Alain", "Pare Elise", "Person Maiwenn", "Rossel Emma", "Tanguy Quentin"] }, { name: "Sonde urinaire", members: ["Camille Louise", "Forte Carla", "Guillo Morgane", "Hocine Lena", "Javelle Clothilde", "Khieu Benjamin", "Moullec Lea", "Petit Stephen", "Robinet Yohan", "Soubigou Pauline"] }, { name: "Antibiothérapie", members: ["Bourleau Cathleen", "Bousigues Marie", "Castel Léane", "Desmaison Charlotte", "Gayet Felix", "Langard Paul", "Le Gouze Alexandre", "Le Potier Alice", "Leclair Elisabeth", "Level Louise", "Memet Marylou", "Mory Hermine", "Prigent Nicolas", "Puyo Lea", "Thomas-Szlachta Marion", "Tizon Laura", "Valibay Nakiya"] }, { name: "Courriers de sortie", members: ["Bourhis Laura", "Garde Noemie", "Genevee Manon", "Guerard Robin", "Jegourel Alice", "Le Bian Pauline", "Legain Thomas", "Lemetayer Marie", "L\'Hostis Salome", "Pignolet Capucine", "Plouidy Louise", "Rio Alexa", "Salzard Clara", "Vehils-Vinals Loic"] } ] },
-            2: { title: '10h30', horaire: '10h30 - 11h15', groupes: [ { name: 'Personne Agée', location: 'A voir', members: ['Jean Dupont','Marie Martin','Alice Girard','Mathis Leroy'] }, { name: 'Transfusion', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Parcours Patient', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Prescription et Sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: "Gestion de l\'urgence", members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde Naso-gastrique', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde urinaire', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Suture', location : 'Salle de réunion Odontologie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Antibiothérapie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Courriers de sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] } ] },
-            3: { title: '11h30', horaire: '11h30 - 12h15', groupes: [ { name: 'Personne Agée', location: 'A voir', members: ['Jean Dupont','Marie Martin','Alice Girard','Mathis Leroy'] }, { name: 'Transfusion', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Parcours Patient', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Prescription et Sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: "Gestion de l\'urgence", members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde Naso-gastrique', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde urinaire', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Suture', location : 'Salle de réunion Odontologie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Antibiothérapie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Courriers de sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] } ] },
-            4: { title: '14h30', horaire: '14h30 - 15h15', groupes: [ { name: 'Personne Agée', location: 'A voir', members: ['Jean Dupont','Marie Martin','Alice Girard','Mathis Leroy'] }, { name: 'Transfusion', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Parcours Patient', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Prescription et Sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: "Gestion de l\'urgence", members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde Naso-gastrique', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde urinaire', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Suture', location : 'Salle de réunion Odontologie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Antibiothérapie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Courriers de sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] } ] },
-            5: { title: '15h30', horaire: '15h30 - 16h15', groupes: [ { name: 'Personne Agée', location: 'A voir', members: ['Jean Dupont','Marie Martin','Alice Girard','Mathis Leroy'] }, { name: 'Transfusion', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Parcours Patient', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Prescription et Sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: "Gestion de l\'urgence", members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde Naso-gastrique', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde urinaire', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Suture', location : 'Salle de réunion Odontologie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Antibiothérapie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Courriers de sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] } ] },
-            6: { title: '16h30', horaire: '16h30 - 17h15', groupes: [ { name: 'Personne Agée', location: 'A voir', members: ['Jean Dupont','Marie Martin','Alice Girard','Mathis Leroy'] }, { name: 'Transfusion', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Parcours Patient', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Prescription et Sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: "Gestion de l\'urgence", members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde Naso-gastrique', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Sonde urinaire', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Suture', location : 'Salle de réunion Odontologie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Antibiothérapie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] }, { name: 'Courriers de sortie', members: ['Sophie Bernard','Lucas Petit','Nathan André','Clara Lambert'] } ] },
-            'visite': { title: 'Visite des sites', location: 'Rendez-vous Hall de la faculté pour Morvan, Verrière CHU pour la Cavale Blanche', horaire: 'Morvan : Matin 11h30, Après-midi 16h30. Cavale Blanche : Matin 12h00, Après-midi 17h00', groupes: [ { name: 'Morvan Matin', members: ['Jean Dupont','Marie Martin','Sophie Bernard','Lucas Petit','Emma Dubois','Thomas Moreau'] }, { name: 'Cavale Blanche Matin', members: ['Léa Laurent','Hugo Simon','Chloé Robert','Maxime Richard','Julie Bonnet','Antoine Garnier'] }, { name: 'Morvan Après-midi', members: ['Camille Roux','Paul Fournier','Sarah Mercier','Louis Blanc','Alice Girard','Nathan André'] }, { name: 'Cavale Blanche Après-Midi', members: ['Clara Lambert','Mathis Leroy','Manon Fontaine','Gabriel Rousseau','Inès Chevalier','Alexandre Vincent'] } ] }
+           1: { title: "09h30", horaire: "09h30 - 10h15", groupes: [ { name: "Transfusion", location : "Amphi 1", members: ["Berrezai Julie", "Boullot Lisa", "Brocard Eloise", "Calvez Laetitia", "Caouissin Morwena", "Claeysen Marie-Madeleine", "Claudel Thicoipe Salome", "Damevin Clementine", "Dehenry Maxime", "Fontenelle Briac", "Gornitzka Pauline", "Guichaoua Theo", "Le Guellec Elsa", "Paganini Laetitia", "Tapin Gabrielle", "Vrignaud Celia"] }, { name: "Parcours Patient", location : "Amphi 1", members: ["Aigle Isaline", "Berehouc Coline", "Boscher Jeanne", "Du Crest de Villeneuve Eleonore", "Fournier Nathan", "Gignoux Alizee",  "Huchette Emile", "Jegourel Alice", "Joomaye Zakir", "Larmet Julia", "Le Nan Mareva", "Le Pouliquen Elsa", "Merot Jeanne", "Morin Baptiste", "Pignarre Baptiste", "Roche Benoit", "Tironneau Marie"] }, { name: "Prescription et Sortie", location : "Salle DAM", members: ["Barras Gaspard", "Barre Katell", "Busunt Harry", "Cillard Rozenn", "Etcheverry Clara", "Lamy Romain", "Laurier Victor", "Le Berrigaud Jade", "Le Mer Noella", "Lesne Clemence", "Piris Axel", "Quenet Clementine", "Radet Lolita", "Sancho Remi", "Vincent Laurine"] }, { name: "Gestion de l\'urgence", location : "TD 4&5", members: ["Bremand Baptiste", "Cardona Marie", "Charpentier Emma", "Clavier Julie", "Crenn Salome", "Delbey Emma", "Dubois Julien", "Favier Ariane", "Girard Maiwenn", "Gourmelen Cecile", "Hamon Louise", "Lebaron Adrien", "Plets Alice", "Pocher Mathilde", "Senechal Mareva", "Vandamme Axelle"] }, { name: "Sonde Nasogastrique", location : "Amphi 2", members: ["El Khilal Emma", "Gerard Chloe", "Gras Gachignard Titouan", "Guillemot Pierre-Marie", "Hiettre-Regnault Eleonore", "Maaroufi Alain", "Pare Elise", "Person Maiwenn", "Rossel Emma", "Tanguy Quentin"] }, { name: "Sonde urinaire", location : "Amphi 2", members: ["Camille Louise", "Forte Carla", "Guillo Morgane", "Hocine Lena", "Javelle Clothilde", "Khieu Benjamin", "Moullec Lea", "Petit Stephen", "Robinet Yohan", "Soubigou Pauline"] }, { name: "Antibiothérapie", location : "TD 2&3", members: ["Bourleau Cathleen", "Bousigues Marie", "Castel Leane", "Desmaison Charlotte", "Gayet Felix", "Langard Paul", "Le Gouze Alexandre", "Le Potier Alice", "Leclair Elisabeth", "Level Louise", "Memet Marylou", "Mory Hermine", "Prigent Nicolas", "Puyo Lea", "Thomas-Szlachta Marion", "Tizon Laura", "Valibay Nakiya"] }, { name: "Courriers de sortie", location : "CDC", members: ["Bourhis Laura", "Garde Noemie", "Genevee Manon", "Guerard Robin", "Houette Ombeline", "Le Bian Pauline", "Legain Thomas", "Lemetayer Marie", "L\'Hostis Salome", "Marcdargent Mathis", "Pignolet Capucine", "Plouidy Louise", "Rio Alexa", "Salzard Clara", "Vehils-Vinals Loic"] } ] },
+            2: { title: "10h30", horaire: "10h30 - 11h15", groupes: [ { name: "Personne Agée", location: "Amphi 1", members: ["Boscher Jeanne", "Boullot Lisa", "Busunt Harry", "Claudel Thicoipe Salome", "Crenn Salome", "Daniel-Simon Lauranne", "Fontenelle Briac", "Jegourel Alice", "Khieu Benjamin", "Le Gouze Alexandra", "Lebaron Adrien", "Menou Anna", "Tanguy Quentin", "Vincent Laurine", "Vrignaud Celia"] }, { name: "Transfusion", location : "Amphi 1", members: ["Aigle Isaline", "Berehouc Coline", "Corolleur Julie", "Favier Ariane", "Gerard Chloe", "Huchette Emile", "Javelle Clothilde", "Lamy Romain", "Langard Paul", "Le Potier Alice", "Lemonnier Paul", "L\'Hostis Salome", "Pignolet Capucine", "Pocher Mathilde"] }, { name: "Prescription et Sortie", location : "Salle DAM", members: ["Bourhis Laura", "Castel Leane", "Delbey Emma", "Desmaison Charlotte", "Du Crest de Villeneuve Eleonore", "Dubois Julien", "Garde Noemie", "Hamon Louise", "Lebon Sandra", "Moullec Lea", "Plouidy Louise", "Pollet Eugenie", "Senechal Mareva", "Thomas-Szlachta Marion", "Vandamme Axelle"] }, { name: "Gestion de l\'urgence", location : "TD 4&5", members: ["Berrezai Julie", "Bourleau Cathleen", "Bousigues Marie", "Brocard Eloise", "Gornitzka Pauline", "Guichaoua Theo", "Larmet Julia", "Le Bian Pauline", "Le Guellec Elsa", "Leclair Elisabeth", "Legain Thomas", "Lesne Clemence", "Level Louise", "Marcdargent Mathis", "Quenet Clementine", "Reix Raphael", "Romeur Kilian"] }, { name: "Sonde Nasogastrique", location : "Amphi 2", members: ["Camille Louise", "Cardona Marie", "Claeysen Marie-Madeleine", "Genevee Manon", "Guillo Morgane", "Hocine Lena", "Petit Stephen", "Piris Axel", "Robinet Yohan", "Salzard Clara", "Torlay Manon"] }, { name: "Sonde urinaire", location : "Amphi 2", members: ["Barre Katell", "Charpentier Emma", "Dehenry Maxime", "El Khilal Emma", "Girard Maiwenn", "Joomaye Zakir", "Lemetayer Marie", "Morvan Sidonie", "Pare Elise", "Person Maiwenn"] }, { name: "Suture", location : "Salle de réunion Odontologie", members: ["Clavier Julie", "Gayet Felix", "Gourmelen Cecile", "Houette Ombeline", "Laurier Victor", "Morin Baptiste", "Paganini Laetitia", "Puyo Lea", "Schmitz Quitterie", "Tizon Laura"] }, { name: "Antibiothérapie", location : "TD 2&3", members: ["Calvez Laetitia", "Cillard Rozenn", "Etcheverry Clara", "Gignoux Alizee", "Gras Gachignard Titouan", "Guillemot Pierre-Marie", "Le Berrigaud Jade", "Le Mer Noella", "Le Pouliquen Elysa", "Le Sausse Leila", "Pignarre Baptiste", "Radet Lolita", "Rio Alexa", "Rossel Emma", "Sancho Remi", "Soubigou Pauline", "Tironneau Marie", "Vehils-Vinals Loic"] }, { name: "Courriers de sortie", location : "CDC", members: ["Barras Gaspard", "Caouissin Morwena", "Forte Carla", "Granja Lou-Ann", "Hiettre-Regnault Eleonore", "Le Nan Mareva", "Maaroufi Alain", "Masson Violaine", "Merot Jeanne", "Mory Hermine", "Plets Alice", "Prigent Nicolas", "Roche Benoit", "Tapin Gabrielle", "Valibay Nakiya"] } ] },
+            3: { title: "11h30", horaire: "11h30 - 12h15", groupes: [ { name: "Personne Agée", location: "Amphi 1", members: ["Barras Gaspard", "Calvez Laetitia", "Desmaison Charlotte", "Girard Maiwenn", "Guillo Morgane", "Morin Baptiste", "Piris Axel", "Reix Raphael", "Sancho Remi", "Torlay Manon"] }, { name: "Transfusion", location : "Amphi 1", members: ["Camille Louise", "Cardona Marie", "El Khilal Emma", "Genevee Manon", "Gourmelen Cecile", "Hamon Louise", "Hocine Lena", "Houette Ombeline", "Le Pouliquen Elysa", "Person Maiwenn", "Petit Stephen", "Pignarre Baptiste", "Plets Alice", "Tanguy Quentin", "Tizon Laura", "Vehils-Vinals Loic"] }, { name: "Prescription et Sortie", location : "Salle DAM", members: ["Boullot Lisa", "Brocard Eloise", "Gerard Chloe", "Guillemot Pierre-Marie", "Jegourel Alice", "Larmet Julia", "Le Guellec Elsa", "Le Nan Mareva", "Le Potier Alice", "Le Sausse Leila", "Mory Hermine", "Rio Alexa", "Roche Benoit", "Schmitz Quitterie", "Soubigou Pauline"] }, { name: "Gestion de l\'urgence", location : "TD 4&5", members: ["Aigle Isaline", "Boscher Jeanne", "Bourhis Laura", "Caouissin Morwena", "Castel Leane", "Fontenelle Briac", "Huchette Emile", "Jincq-Le Bot Jean-Baptiste", "Langard Paul", "Le Gouze Alexandra", "Le Jeune Nathan", "L'Hostis Salome", "Maaroufi Alain", "Pignolet Capucine", "Tapin Gabrielle"] }, { name: "Sonde Nasogastrique", location : "Amphi 2", members: ["Cillard Rozenn", "Gignoux Alizee", "Hiettre-Regnault Eleonore", "Javelle Clothilde", "Khieu Benjamin", "Laurier Victor", "Le Bian Pauline", "Marcdargent Mathis", "Paganini Laetitia", "Pocher Mathilde", "Prigent Nicolas"] }, { name: "Sonde Urinaire", location : "Amphi 2", members: ["Clavier Julie", "Crenn Salome", "Dubois-Ahlqvist Julien", "Lebaron Adrien", "Merot Jeanne"] }, { name: "Suture", location : "Salle de réunion Odontologie", members: ["Charpentier Emma", "Favier Ariane", "Forte Carla", "Guichaoua Theo", "Moullec Lea", "Pare Elise", "Plouidy Louise", "Rossel Emma", "Tironneau Marie", "Vandamme Axelle"] }, { name: "Antibiothérapie", location : "TD 2&3", members: ["Barre Katell", "Berehouc Coline", "Busunt Harry", "Claeysen Marie-Madeleine", "Claudel Thicoipe Salome", "Corolleur Julie", "Daniel-Simon Lauranne", "Dubois Julien", "Garde Noemie", "Granja Lou-Ann", "Legain Thomas", "Lemetayer Marie", "Lesne Clemence", "Menou Anna", "Quenet Clementine", "Robinet Yohan", "Romeur Kilian", "Senechal Mareva"] }, { name: "Courriers de sortie", location : "CDC", members: ["Bourleau Cathleen", "Delbey Emma", "Du Crest De Villeneuve Eleonore", "Gras Gachignard Titouan", "Le Berrigaud Jade", "Le Mer Noella", "Leclair Elisabeth", "Lemonnier Paul", "Mollard-Tanguy Jules", "Morvan Sidonie", "Radet Lolita", "Thomas-Szlachta Marion", "Vincent Laurine", "Vrignaud Celia"] } ] },
+            4: { title: "14h30", horaire: "14h30 - 15h15", groupes: [ { name: "Personne Agée", location: "Amphi 1", members: ["Berehouc Coline", "Bourhis Laura", "Caouissin Morwena", "Cardona Marie", "Garde Noemie", "Hamon Louise", "Langard Paul", "Le Guellec Elsa", "Le Pouliquen Elysa", "Lesne Clemence"] }, { name: "Transfusion", location : "Amphi 1", members: ["Bourleau Cathleen", "Castel Leane", "Crenn Salome", "Delbey Emma", "Gignoux Alizee", "Hiettre-Regnault Eleonore", "Le Berrigaud Jade", "Le Bian Pauline", "Le Mer Noella", "Level Louise", "Radet Lolita", "Robinet Yohan", "Roche Benoit", "Romeur Kilian", "Rossel Emma"] }, { name: "Parcours Patient", location : "Amphi 1", members: ["Barras Gaspard", "Boullot Lisa", "Daniel-Simon Lauranne", "Guillo Morgane", "Lebaron Adrien", "Legain Thomas", "Mollard-Tanguy Jules", "Pollet Eugenie", "Valibay Nakiya"] }, { name: "Prescription et Sortie", location : "Salle DAM", members: ["Aigle Isaline", "Boscher Jeanne", "Calvez Laetitia", "Claudel Thicoipe Salome", "Clavier Julie", "Corolleur Julie", "Du Crest De Villeneuve Eleonore", "Dubois-Ahlqvist Julien", "Dupart Victoire",  "Le Jeune Nathan", "Morvan Sidonie", "Paganini Laetitia", "Pare Elise", "Pignarre Baptiste", "Prigent Nicolas", "Tironneau Marie"] }, { name: "Gestion de l\'urgence", location: "TD 4&5", members: ["Busunt Harry", "Camille Louise", "Du Crest De Villeneuve Eleonore", "Forte Carla", "Genevee Manon", "Javelle Clothilde", "Joomaye Zakir", "Le Sausse Leila", "Menou Anna", "Merot Jeanne", "Mory Hermine", "Petit Stephen", "Tanguy Quentin", "Thomas-Szlachta Marion", "Vehils-Vinals Loic", "Vincent Laurine"] }, { name: "Sonde Nasogastrique", location: "Amphi 2", members: ["Barre Katell", "Charpentier Emma", "Leclair Elisabeth", "Lemetayer Marie", "Morin Baptiste", "Moullec Lea", "Senechal Mareva", "Tizon Laura", "Vandamme Axelle"] }, { name: "Sonde urinaire", location: "Amphi 2", members: ["Claeysen Marie-Madeleine", "Houette Ombeline"] }, { name: "Suture", location : "Salle de réunion Odontologie", members: ["Cillard Rozenn", "Girard Maiwenn", "Guillemot Pierre-Marie", "Jincq-Le Bot Jean-Baptiste", "Le Potier Alice", "Marcdargent Mathis", "Person Maiwenn", "Reix Raphael", "Rio Alexa"] }, { name: "Antibiothérapie", location : "TD 2&3", members: ["Brocard Eloise", "Dehenry Maxime", "El Khilal Emma", "Fontenelle Briac", "Gourmelen Cecile", "Hocine Lena", "Lemonnier Paul", "L'Hostis Salome", "Maaroufi Alain", "Pignolet Capucine", "Plets Alice", "Plouidy Louise", "Pocher Mathilde", "Schmitz Quitterie", "Tapin Gabrielle", "Torlay Manon", "Uyttebroeck Fanny", "Vrignaud Celia"] }, { name: "Courriers de sortie", location: "CDC", members: ["Corre Justine", "Desmaison Charlotte", "Favier Ariane", "Gerard Chloe", "Guichaoua Theo", "Huchette Emile", "Jegourel Alice", "Khieu Benjamin", "Larmet Julia", "Laurier Victor", "Le Gouze Alexandra", "Piris Axel", "Puyo Lea", "Quenet Clementine", "Sancho Remi", "Soubigou Pauline"] } ] },
+            5: { title: "15h30", horaire: "15h30 - 16h15", groupes: [ { name: "Personne Agée", location: "Amphi 1", members: ["Berrezai Julie", "Bousigues Marie", "Camille Louise", "Corolleur Julie", "Genevee Manon", "Lamy Romain", "Le Jeune Nathan", "Level Louise", "Maaroufi Alain", "Mory Hermine", "Plouidy Louise", "Pollet Eugenie"] }, { name: 'Transfusion', location : "Amphi 1", members: ["Barre Katell", "Boscher Jeanne", "Clavier Julie", "Desmaison Charlotte", "Guillemot Pierre-Marie", "Guillo Morgane", "Joomaye Zakir", "Larmet Julia", "Laurier Victor", "Lebaron Adrien", "Legain Thomas", "Morin Baptiste", "Piris Axel", "Prigent Nicolas", "Sancho Remi"] }, { name: "Parcours Patient", location : "Amphi 1", members: ["Busunt Harry", "Caouissin Morwena", "Castel Leane", "Claeysen Marie-Madeleine", "Gourmelen Cecile", "Hamon Louise", "Jegourel Alice", "Le Bian Pauline", "Le Sausse Leila", "Lebon Sandra", "Leclair Elisabeth", "Lesne Clemence", "Marcdargent Mathis", "Plets Alice", "Soubigou Pauline", "Vincent Laurine"] }, { name: "Prescription et Sortie", location : "Salle DAM", members: ["Berehouc Coline", "Colas Anne", "Corre Justine", "Forte Carla", "Hocine Lena", "Huchette Emile", "Langard Paul", "Le Gouze Alexandra", "Le Pouliquen Elysa", "Lemetayer Marie", "L'Hostis Salome", "Menou Anna", "Pignolet Capucine", "Romeur Kilian", "Tapin Gabrielle", "Tizon Laura", "Vehils-Vinals Loic"] }, { name: "Gestion de l\'urgence", location : "TD 4&5", members: ["Dupart Victoire", "Garde Noemie", "Hiettre-Regnault Eleonore", "Le Berrigaud Jade", "Le Mer Noella", "Lemonnier Paul", "Mollard-Tanguy Jules", "Morvan Sidonie", "Person Maiwenn", "Pignarre Baptiste", "Radet Lolita", "Rio Alexa", "Robinet Yoann", "Rossel Emma", "Tironneau Marie", "Uyttebroeck Fanny", "Vrignaud Celia"] }, { name: "Sonde Nasogastrique", location : "Amphi 2", members: ["Dehenry Maxime", "Fontenelle Briac", "Girard Maiwenn", "Houette Ombeline"] }, { name: "Sonde urinaire", location : "Amphi 2", members: ["Cardona Marie", "Cillard Rozenn", "Dehenry Maxime", "Favier Ariane", "Torlay Manon", "Vandamme Axelle"] }, { name: "Antibiothérapie", location : "TD 2&3", members: ["Barras Gaspard", "Boullot Lisa", "Bourhis Laura", "Crenn Salome", "Du Crest De Villeneuve Eleonore", "Gerard Chloe", "Gornitzka Pauline", "Guichaoua Theo", "Khieu Benjamin", "Le Guellec Elsa", "Merot Jeanne", "Moullec Lea", "Paganini Laetitia", "Petit Stephen", "Reix Raphael", "Roche Benoit"] }, { name: "Courriers de sortie", location : "CDC", members: ["Aigle Isaline", "Brocard Eloise", "Calvez Laetitia", "Charpentier Emma", "Claudel Thicoipe Salome", "Dubois Julien", "Dubois-Ahlqvist Julien", "El Khilal Emma", "Etcheverry Clara", "Gignoux Alizee", "Le Potier Alice", "Pare Elise", "Pocher Mathilde", "Schmitz Quitterie", "Senechal Mareva", "Tanguy Quentin"] } ] },
+            6: { title: "16h30", horaire: "16h30 - 17h15", groupes: [ { name: "Personne Agée", location: "Amphi 1", members: ["Busunt Harry", "Castel Leane", "Forte Carla", "Hocine Lena", "Le Mer Noella", "Lemetayer Marie", "L'Hostis Salome", "Pignarre Baptiste", "Roche Benoit", "Tironneau Marie"] }, { name: "Parcours Patient", location : "Amphi 1", members: ["Genevee Manon", "Hiettre-Regnault Eleonore", "Khieu Benjamin", "Laurier Victor", "Le Gouze Alexandra", "Mory Hermine", "Moullec Lea", "Plouidy Louise", "Rio Alexa"] }, { name:"Prescription et Sortie", location : "Salle DAM", members: ["Berrezai Julie", "Caouissin Morwena", "Crenn Salome", "El Khilal Emma", "Gignoux Alizee", "Gornitzka Pauline", "Legain Thomas", "Lemonnier Paul", "Marcdargent Mathis", "Mollard-Tanguy Jules", "Person Maiwenn", "Petit Stephen", "Plets Alice", "Tanguy Quentin", "Vrignaud Celia"] }, { name: "Gestion de l\'urgence", location : "TD 4&5", members: ["Boullot Lisa", "Calvez Laetitia", "Cillard Rozenn", "Claudel Thicoipe Salome", "Colas Anne", "Corre Justine", "Desmaison Charlotte", "Etcheverry Clara", "Guillo Morgane", "Le Pouliquen Elysa", "Morin Baptiste", "Schmitz Quiiterie", "Soubigou Pauline", "Torlay Manon"] }, { name: "Sonde Nasogastrique", location : "Amphi 2", members: ["Hamon Louise", "Menou Anna", "Merot Jeanne"] }, { name: "Sonde urinaire", location : "Amphi 2", members: ["Le Bian Pauline", "Le Guellec Elsa", "Paganini Laetitia", "Pocher Mathilde", "Rossel Emma"] }, { name: "Antibiothérapie", location : "TD 2&3", members: ["Aigle Isaline", "Boscher Jeanne", "Camille Louise", "Cardona Marie", "Clavier Julie", "Dubois-Ahlqvist Julien", "Dupart Victoire", "Favier Ariane", "Girard Maiwenn", "Houette Ombeline", "Jegourel Alice", "Larmet Julia", "Le Jeune Nathan", "Lebaron Adrien", "Morvan Sidonie", "Pare Elise", "Piris Axel", "Vincent Laurine"] }, { name: "Courriers de sortie", location : "CDC", members: ["Claeysen Marie-Madeleine", "Corolleur Julie", "Gourmelen Cecile", "Guillemot Pierre-Marie", "Joomaye Zakir", "Le Sausse Leila", "Lebon Sandra", "Lesne Clemence", "Pollet Eugenie", "Romeur Kilian", "Tizon Laura", "Uyttebroeck Fanny", "Vandamme Axelle"] } ] },
+            'visite': { title: 'Visite des sites', horaire: 'Morvan : Matin 11h30, Après-midi 16h30. Cavale Blanche : Matin 12h00, Après-midi 17h00', groupes: [ { name: 'Morvan Matin', location: "Hall de la faculté de médecine", members: ["Damevin Clementine", "Dehenry Maxime", "Gayet Felix", "Level Louise", "Masson Violaine", "Pollet Eugenie", "Puyo Lea", "Valibay Nakiya"] }, { name: 'Cavale Blanche Matin', location: "Verrière entrée principale", members: ["Berrezai Julie", "Bousigues Marie", "Bremand Baptiste", "Etcheverry Clara", "Fournier Nathan", "Guerard Robin", "Joomaye Zakir", "Lamy Romain", "Lebon Sandra", "Memet Marylou", "Mousset Marie", "Salzard Clara"] }, { name: 'Morvan Après-midi', location : "Hall de la faculté de médecine", members: ["Bellanger Lucille", "Charpentier Emma", "Delbey Emma", "Lamy Romain", "Memet Marylou", "Mousset Marie", "Pignolet Capucine", "Reix Raphael", "Tapin Gabrielle"] }, { name: 'Cavale Blanche Après-Midi', location: "Verrière entrée principale", members: ["Berehouc Coline", "Bourhis Laura", "Busunt Harry", "Fontenelle Briac", "Gayet Felix", "Granja Lou-Ann", "Quenet Clementine", "Senechal Mareva"] } ] }
         },
         lieux: [
+            { name: 'Faculté de médecine', building: '22 Rue Camille Desmoulins', description: 'Lieu principal de la journée' },
+            { name: 'Hopital Morvan', building: 'Hopital proche de la faculté'},
+            { name: 'Hopital Cavale Blanche', building: 'Boulevard Tanguy Prigent', description: "Accès en bus, ligne 1" },
             { name: 'Amphithéâtre 1', building: 'Faculté de médecine - Niveau -1', description: 'Tout au bout du hall' },
             { name: 'Amphithéâtre 2', building: 'Faculté de médecine - Niveau -1', description: "Accolé à amphi 1" },
-            { name: 'TD', building: 'Bâtiment Principal - 1er étage', description: 'Espace de travail calme avec ordinateurs et ressources documentaires' },
-            { name: 'Salle de réunion d\'odontologie, médecine bucco-dentaire et chirurgie orale', building: 'Site Morvan, batiment 6', description: 'Sous-sol, batiment le plus proche de la faculté' }
+            { name: 'TD 2/3', building: 'Faculté de médecine - Rez de Chaussée', description: "Face à l\'entrée, couoir à gauche de la BU"},
+            { name: 'TD 4/5', building: 'Faculté de médecine - Rez de Chaussée', description: "Face à l\'entrée, couoir à gauche de la BU"},
+            { name: 'Salle de réunion d\'odontologie, médecine bucco-dentaire et chirurgie orale', building: 'Site Morvan, batiment 6', description: 'Sous-sol, batiment le plus proche de la faculté' },
+            { name: 'Salle de réunion direction des affaires médicales', building: 'Site Morvan, batiment 3', description: "4ème étage, suivez les indications" },
+            { name: 'Centre de données cliniques', building: 'Site Morvan, batiment 3', description: "3ème étage, suivez les indications" }
         ]
     };
 
@@ -596,21 +697,16 @@
         const passwordInput = document.getElementById('passwordInput');
         const loginError = document.getElementById('loginError');
         const enteredPassword = passwordInput.value.trim();
-        console.log("Mot de passe saisi :", enteredPassword);
-        console.log("Mot de passe attendu :", COMMON_PASSWORD);
-        
+
         if (enteredPassword === COMMON_PASSWORD) {
             localStorage.setItem(IS_LOGGED_IN_KEY, 'true');
-            console.log("Connexion réussie, redirection...");
             showApp();
         } else {
             loginError.style.display = 'block';
             passwordInput.value = '';
             passwordInput.focus();
-            console.log("Échec de connexion");
         }
     }
-
 
     function logout() {
         localStorage.removeItem(IS_LOGGED_IN_KEY);
@@ -624,23 +720,20 @@
         document.getElementById('appContainer').style.display = 'block';
         document.getElementById('loginError').style.display = 'none';
         loadAllData();
+        showPage('home');
     }
 
     function init() {
-        console.log("Initialisation...");
         const isLoggedIn = localStorage.getItem(IS_LOGGED_IN_KEY);
-        console.log("Statut de connexion :", isLoggedIn);
-        
         if (isLoggedIn === 'true') {
-            console.log("Utilisateur connecté, affichage de l'app");
             showApp();
+            loadWelcomeText();
         } else {
-            console.log("Utilisateur non connecté, affichage du login");
             logout();
         }
     }
-    window.onload = init;
 
+    window.onload = init;
 
     // ==================== NAVIGATION ====================
     function showPage(pageName, event) {
@@ -675,7 +768,6 @@
         loadPlanning();
         loadAteliers();
         loadPlan();
-        showPage('planning');
     }
 
     function loadPlanning() {
@@ -735,7 +827,7 @@
         personalResult.innerHTML = '';
         const userPrograms = [];
         let isUserFound = false;
-        
+
         Object.keys(DATA.ateliers).forEach(key => {
             const atelier = DATA.ateliers[key];
             atelier.groupes.forEach(g => {
@@ -745,12 +837,12 @@
                         title: atelier.title,
                         groupeName: g.name,
                         horaire: atelier.horaire,
-                        location: g.location || atelier.location // Utilise le lieu du groupe, sinon celui de l'atelier
-                        });
+                        location: g.location || atelier.location
+                    });
                 }
             });
         });
-        
+
         if (isUserFound) {
             let html = `<div class="search-result"><div class="result-title">Programme de ${fullName}</div>`;
             userPrograms.forEach(p => {
@@ -781,6 +873,20 @@
         setTimeout(() => successDiv.innerHTML = '', 5000);
     });
 
-    // ==================== INITIALISATION ====================
-    window.onload = init;
+    // ==================== WELCOME TEXT ====================
+    function saveWelcomeText() {
+        const welcomeText = document.getElementById('customWelcomeText').value;
+        localStorage.setItem('welcomeText', welcomeText);
+        alert('Message enregistré avec succès !');
+    }
+
+    function loadWelcomeText() {
+        const savedText = localStorage.getItem('welcomeText');
+        if (savedText) {
+            document.getElementById('customWelcomeText').value = savedText;
+        }
+    }
 </script>
+
+</body>
+</html>
