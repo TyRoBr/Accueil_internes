@@ -866,13 +866,7 @@
     });
 
     // ==================== CONTACT FORM ====================
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const successDiv = document.getElementById('contactSuccess');
-        successDiv.innerHTML = '<div class="success-message">✅ Votre message a été envoyé avec succès ! Nous vous recontacterons sous peu.</div>';
-        document.getElementById('contactForm').reset();
-        setTimeout(() => successDiv.innerHTML = '', 5000);
-    });
+
 
     // ==================== WELCOME TEXT ====================
     function saveWelcomeText() {
