@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choix des ateliers</title>
+
+<!--
+    ==========================================================================
+    CONFIGURATION REQUISE AVANT MISE EN LIGNE
+    ==========================================================================
+    Ce fichier est statique (GitLab Pages ne peut pas exécuter de serveur),
+    mais comme chacun répond depuis son propre appareil, il faut malgré tout
+    un endroit central où stocker les réponses de tout le monde.
+    On utilise Firebase Firestore (gratuit, sans carte bancaire) pour ça.
+
+    Étapes (10 minutes, aucune ligne de code à écrire) :
+    1. Aller sur https://console.firebase.google.com > "Ajouter un projet".
+    2. Dans le projet : Build > Firestore Database > Créer une base
+       (mode "production" ou "test", peu importe, on remplace les règles).
+    3. Menu Parametres du projet > Vos applications > </> (Web) > donner
+       un nom > Firebase affiche un objet firebaseConfig : copiez-le
+       et collez-le ci-dessous à la place de FIREBASE_CONFIG.
+    4. Firestore Database > Règles, remplacer par :
+
+       rules_version = '2';
+       service cloud.firestore {
+         match /databases/{database}/documents {
+           match /submissions/{doc} { allow read, write: if true; }
+           match /meta/{doc}        { allow read, write: if true; }
+         }
+       }
+
+       Ces règles sont ouvertes (n'importe qui avec le lien peut lire ou
+       écrire) : c'est suffisant pour un usage interne non sensible (juste
+       des noms + des choix d'ateliers), mais ne mettez rien de confidentiel
+       dans cet outil.
+    5. Publier "Règles".
+    ==========================================================================
+-->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body{
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height:100vh;
+    }
+    .hidden{ display:none !important; }
+
+    /* ---- LOGOS ---- */
+    .logos-bar{
+        background:#fff;
+        display:flex; align-items:center; justify-content:center;
+        gap:32px; flex-wrap:wrap;
+        padding:14px 20px;
+        box-shadow:0 2px 12px rgba(0,0,0,0.15);
+        position:relative; z-index:5;
+    }
+    .logos-bar img{ display:block; height:42px; width:auto; }
+    .logos-bar img.logo-square{ height:42px; border-radius:6px; }
+    @media (max-width:600px){
+        .logos-bar{ gap:18px; padding:12px 14px; }
+        .logos-bar img{ height:32px; }
+    }
+
+    /* ---- SHELL ---- */
+    .shell{ max-width:640px; margin:0 auto; padding:48px 20px 80px; }
+    .shell.wide{ max-width:980px; }
+    .topline{
+        display:flex; justify-content:space-between; align-items:center;
+        margin-bottom:24px; flex-wrap:wrap; gap:10px;
+    }
+    .brand{ font-size:22px; font-weight:700; color:#fff; }
+    .toplinks{ display:flex; gap:18px; }
+    .toplinks button{
+        background:none; border:none; font:inherit; color:#eee;
+        cursor:pointer; font-size:14px; text-decoration:underline; text-underline-offset:3px;
+    }
+    .toplinks button:hover{ color:#fff; }
+
+    /* ---- CARD (reprend le style login-box / page d'origine) ---- */
+    .card{
+        background:#fff;
+        padding:35px 40px;
+        border-radius:15px;
+        box-shadow:0 10px 40px rgba(0,0,0,0.2);
+        margin-bottom:24px;
+    }
+    .card h1{ color:#333; font-size:26px; margin-bottom:8px; }
+    .card h2{ color:#333; font-size:20px; margin-bottom:14px; border-bottom:3px solid #667eea; padding-bottom:8px; }
+    .card h3{ color:#333; font-size:16px; }
+    .subtitle{ color:#666; font-size:15px; margin-bottom:26px; }
+
+    /* ---- FORM FIELDS ---- */
+    .form-group{ margin-bottom:20px; }
+    .form-group label{ display:block; margin-bottom:8px; color:#555; font-weight:500; }
+    .form-group input{
+        width:100%; padding:12px; border:2px solid #e0e0e0; border-radius:8px;
+        font-size:16px; transition:border-color .3s;
+    }
+    .form-group input:focus{ outline:none; border-color:#667eea; }
+    .name-row{ display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+
+    /* ---- CHECKLIST ---- */
+    .counter{
+        display:inline-flex; align-items:center; gap:8px;
+        background:#eef0fd; color:#4c50a0; padding:6px 14px; border-radius:999px;
+        font-size:14px; font-weight:600; margin-bottom:20px;
+    }
+    .counter.full{ background:#fff3cd; color:#856404; }
+    .checklist{ display:flex; flex-direction:column; gap:10px; margin-bottom:26px; }
+    .choice{
+        display:flex; align-items:center; gap:14px;
+        border:2px solid #e0e0e0; border-radius:10px; padding:14px 16px;
+        cursor:pointer; transition:border-color .15s, background .15s;
+    }
+    .choice:hover{ border-color:#667eea; }
+    .choice.checked{ border-color:#667eea; background:#f5f6fe; }
+    .choice.disabled{ opacity:.45; cursor:not-allowed; }
+    .choice input{ display:none; }
+    .choice .box{
+        width:22px; height:22px; border-radius:6px; border:2px solid #e0e0e0;
+        flex-shrink:0; position:relative; background:#fff;
+    }
+    .choice.checked .box{ background:#667eea; border-color:#667eea; }
+    .choice.checked .box::after{
+        content:""; position:absolute; left:6px; top:2px; width:6px; height:11px;
+        border:solid white; border-width:0 2px 2px 0; transform:rotate(45deg);
+    }
+    .choice .num{ font-weight:700; color:#999; width:20px; text-align:right; font-size:15px; flex-shrink:0; }
+    .choice.checked .num{ color:#667eea; }
+    .choice .label{ font-size:15px; color:#333; }
+
+    /* ---- BUTTONS ---- */
+    .btn{
+        display:inline-flex; align-items:center; justify-content:center;
+        padding:12px 22px; border-radius:8px; border:none; font:inherit;
+        font-size:16px; font-weight:600; cursor:pointer; transition:transform .2s, opacity .2s;
+    }
+    .btn:active{ transform:translateY(-1px); }
+    .btn-primary{ background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:#fff; width:100%; }
+    .btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
+    .btn-secondary{ background:#6c757d; color:#fff; }
+    .btn-danger{ background:#e74c3c; color:#fff; }
+    .btn-row{ display:flex; gap:12px; flex-wrap:wrap; }
+    .btn-row .btn{ width:auto; }
+
+    /* ---- MESSAGES ---- */
+    .error{ color:#e74c3c; font-size:14px; margin-top:10px; }
+    .code-box{
+        background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color:#fff; border-radius:10px; padding:24px; text-align:center; margin:22px 0;
+    }
+    .code-box p{ font-size:14px; opacity:.9; margin-top:6px; }
+    .note{
+        background:#fff3cd; border:1px solid #ffc107; color:#856404;
+        padding:15px; border-radius:8px; font-size:14px; margin-top:18px;
+    }
+    .search-result{
+        background:#e8f5e9; border:2px solid #4caf50; padding:20px;
+        border-radius:10px; margin-top:20px;
+    }
+    .warn-box{
+        background:#ffebee; border:2px solid #e74c3c; color:#7a1f1f;
+        padding:15px; border-radius:8px; font-size:14px; margin-top:18px;
+    }
+    .setup-banner{
+        background:#fff3cd; border:1px solid #ffc107; color:#856404;
+        padding:16px 20px; border-radius:10px; margin-bottom:24px; font-size:14px;
+    }
+
+    /* ---- ADMIN ---- */
+    .stat-row{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:26px; }
+    .stat{ background:#f5f6fe; border-radius:10px; padding:16px 20px; flex:1; min-width:140px; }
+    .stat .n{ font-size:26px; font-weight:700; color:#667eea; }
+    .stat .l{ font-size:13px; color:#666; margin-top:2px; }
+    .bar-row{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+    .bar-row .name{ width:230px; font-size:14px; color:#333; flex-shrink:0; }
+    .bar-track{ flex:1; background:#eee; border-radius:6px; height:12px; overflow:hidden; }
+    .bar-fill{ background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); height:100%; border-radius:6px; }
+    .bar-row .count{ width:36px; text-align:right; font-size:13px; color:#666; flex-shrink:0; }
+
+    .settings-row{ display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+    .settings-row .form-group{ flex:1; min-width:180px; margin-bottom:0; }
+
+    table.grid{ width:100%; border-collapse:collapse; margin-top:8px; font-size:13.5px; }
+    table.grid th, table.grid td{ border:1px solid #e0e0e0; padding:8px 10px; text-align:center; }
+    table.grid th{ background:#f5f6fe; color:#4c50a0; font-weight:600; }
+    table.grid td.name-cell{ text-align:left; font-weight:600; background:#fafafa; }
+    table.grid td.full{ background:#fff3cd; color:#856404; font-weight:600; }
+    table.grid td.closed{ color:#ccc; background:#fafafa; }
+    table.grid td.under{ background:#ffebee; color:#c0392b; font-weight:600; }
+
+    .accordion{ border:1px solid #e0e0e0; border-radius:9px; margin-top:8px; overflow:hidden; }
+    .accordion summary{
+        cursor:pointer; padding:12px 16px; background:#fafafa; font-weight:600; font-size:14px;
+        list-style:none; display:flex; justify-content:space-between; color:#333;
+    }
+    .accordion summary::-webkit-details-marker{ display:none; }
+    .accordion .body{ padding:12px 16px; font-size:13.5px; color:#666; }
+    .accordion .slot-line{ margin-bottom:6px; }
+    .accordion .slot-line b{ color:#333; }
+
+    .schedule-table{ width:100%; border-collapse:collapse; margin-top:6px; }
+    .schedule-table td{ border:1px solid #e0e0e0; padding:12px 14px; font-size:14.5px; }
+    .schedule-table td.slot-num{ font-weight:700; color:#667eea; width:110px; }
+    .schedule-table td.empty{ color:#999; font-style:italic; }
+    .schedule-table tr.fixed-row td{ background:#f5f6fe; color:#666; }
+    .schedule-table tr.fixed-row td.slot-num{ color:#4c50a0; }
+
+    .loading{ color:#666; font-size:14px; padding:20px 0; }
+
+    @media (max-width:600px){
+        .shell{ padding:28px 14px 60px; }
+        .card{ padding:24px; }
+        .name-row{ grid-template-columns:1fr; }
+        .bar-row .name{ width:150px; font-size:13px; }
+    }
+</style>
+</head>
+<body>
+
+<header class="logos-bar">
+    <img src="logos/logo-ubo.png" alt="Faculté de Médecine et Sciences de la Santé — UBO" class="logo-wide">
+    <img src="logos/logo-chu.png" alt="CHU de Brest" class="logo-tall">
+    <img src="logos/logo-internat.svg" alt="Internat de Brest" class="logo-square">
+</header>
+
+
+<!-- ============ PUBLIC : QUESTIONNAIRE ============ -->
+<div id="viewForm" class="shell">
+    <div class="topline">
+        <div class="brand">📋 Choix des ateliers</div>
+        <div class="toplinks">
+            <button onclick="goTo('lookup')">Retrouver mon planning</button>
+            <button onclick="goTo('adminLogin')">Espace organisateur</button>
+        </div>
+    </div>
+
+    <div id="setupBannerForm" class="hidden setup-banner">
+        Base de données non configurée : voir les instructions en commentaire au début du fichier HTML (bloc "CONFIGURATION REQUISE").
+    </div>
+
+    <div class="card">
+        <h1>Sélectionnez vos ateliers</h1>
+        <p class="subtitle">Choisissez jusqu'à 6 ateliers parmi les 9 proposés. La répartition dans les créneaux horaires sera faite ensuite par l'organisateur, en veillant à ce qu'aucun de vos ateliers ne tombe au même moment. Si vous vous êtes déjà inscrit(e), renvoyer ce formulaire remplacera votre réponse précédente.</p>
+
+        <div class="name-row" style="margin-bottom:6px;">
+            <div class="form-group">
+                <label for="firstName">Prénom</label>
+                <input type="text" id="firstName" required>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Nom</label>
+                <input type="text" id="lastName" required>
+            </div>
+        </div>
+
+        <div id="counter" class="counter">0 / 6 sélectionnés</div>
+
+        <div id="checklist" class="checklist"></div>
+
+        <div id="formError" class="error"></div>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitChoices()">Valider mes choix</button>
+    </div>
+</div>
+
+<!-- ============ PUBLIC : CONFIRMATION ============ -->
+<div id="viewConfirm" class="shell hidden">
+    <div class="card">
+        <h1 id="confirmTitle">Choix enregistrés</h1>
+        <p class="subtitle" id="confirmSubtitle">Merci, votre réponse a bien été enregistrée.</p>
+        <div class="code-box">
+            <div style="font-size:20px;font-weight:700;" id="confirmName">—</div>
+            <p>Ateliers choisis : <span id="confirmChoices"></span></p>
+        </div>
+        <div class="note">La répartition dans les créneaux n'est pas immédiate : elle sera publiée par l'organisateur. Revenez plus tard via "Retrouver mon planning".</div>
+        <div class="btn-row" style="margin-top:24px;">
+            <button class="btn btn-primary" style="width:auto;" onclick="goTo('form')">Retour au questionnaire</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ PUBLIC : LOOKUP ============ -->
+<div id="viewLookup" class="shell hidden">
+    <div class="topline">
+        <div class="brand">📋 Choix des ateliers</div>
+        <div class="toplinks"><button onclick="goTo('form')">← Retour au questionnaire</button></div>
+    </div>
+    <div class="card">
+        <h2>Retrouver mon planning</h2>
+        <p class="subtitle">Entrez votre prénom et votre nom, tels que saisis lors de l'inscription.</p>
+        <div class="name-row">
+            <div class="form-group">
+                <label for="lookupFirst">Prénom</label>
+                <input type="text" id="lookupFirst">
+            </div>
+            <div class="form-group">
+                <label for="lookupLast">Nom</label>
+                <input type="text" id="lookupLast">
+            </div>
+        </div>
+        <button class="btn btn-primary" style="width:auto;" onclick="lookupSchedule()">Afficher mon planning</button>
+        <div id="lookupResult"></div>
+    </div>
+</div>
+
+<!-- ============ ADMIN : LOGIN ============ -->
+<div id="viewAdminLogin" class="shell hidden">
+    <div class="topline">
+        <div class="brand">📋 Choix des ateliers</div>
+        <div class="toplinks"><button onclick="goTo('form')">← Retour au questionnaire</button></div>
+    </div>
+    <div class="card">
+        <h2>Espace organisateur</h2>
+        <p class="subtitle">Accès réservé à l'organisation de la répartition.</p>
+        <div class="form-group">
+            <label for="adminKey">Clé d'accès</label>
+            <input type="password" id="adminKey" placeholder="Entrez la clé d'accès">
+        </div>
+        <button class="btn btn-primary" style="width:auto;" onclick="adminLogin()">Se connecter</button>
+        <div id="adminLoginError" class="error"></div>
+    </div>
+</div>
+
+<!-- ============ ADMIN : DASHBOARD ============ -->
+<div id="viewAdmin" class="shell wide hidden">
+    <div class="topline">
+        <div class="brand">📋 Espace organisateur</div>
+        <div class="toplinks"><button onclick="goTo('form')">Retour au questionnaire public</button></div>
+    </div>
+
+    <div id="setupBannerAdmin" class="hidden setup-banner">
+        Base de données non configurée : voir les instructions en commentaire au début du fichier HTML.
+    </div>
+
+    <div class="card">
+        <h2>Vue d'ensemble</h2>
+        <div id="adminLoading" class="loading">Chargement des réponses…</div>
+        <div id="adminOverview" class="hidden">
+            <div class="stat-row">
+                <div class="stat"><div class="n" id="statTotal">0</div><div class="l">réponses reçues</div></div>
+                <div class="stat"><div class="n" id="statPublished">Non</div><div class="l">résultats publiés</div></div>
+            </div>
+            <div id="demandBars"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Réglages de la répartition</h2>
+        <div class="settings-row">
+            <div class="form-group">
+                <label for="settingSlots">Nombre de créneaux horaires</label>
+                <input type="number" id="settingSlots" min="6" value="6">
+            </div>
+            <div class="form-group">
+                <label for="settingCapacity">Capacité max par atelier / créneau</label>
+                <input type="number" id="settingCapacity" min="1" value="20">
+            </div>
+            <div class="form-group">
+                <label for="settingMin">Effectif minimum par groupe (en dessous : fermeture)</label>
+                <input type="number" id="settingMin" min="1" value="8">
+            </div>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-primary" style="width:auto;" onclick="runAllocation()">Lancer la répartition</button>
+            <button class="btn btn-secondary" id="publishBtn" onclick="togglePublish()">Publier les résultats</button>
+            <button class="btn btn-secondary" onclick="exportCSV()">Exporter en CSV</button>
+            <button class="btn btn-danger" onclick="resetAll()">Réinitialiser toutes les données</button>
+        </div>
+        <div id="allocWarning"></div>
+    </div>
+
+    <div class="card" id="scheduleCard" style="display:none;">
+        <h2>Grille de répartition</h2>
+        <p class="subtitle">Nombre d'internes affectés à chaque atelier, par créneau.</p>
+        <div id="scheduleGrid"></div>
+        <div id="scheduleDetail" style="margin-top:20px;"></div>
+    </div>
+</div>
+
+<script>
+    /* ==========================================================
+       1) COLLEZ ICI VOTRE CONFIGURATION FIREBASE (voir le bloc
+          de commentaires en haut du fichier pour la marche à suivre)
+       ========================================================== */
+    const FIREBASE_CONFIG = {
+        apiKey: "AIzaSyAcH5MKG4sgSEhTSWuExn0TCMn4P85Wdn4",
+        authDomain: "accueil-internes-brest.firebaseapp.com",
+        projectId: "accueil-internes-brest",
+        storageBucket: "accueil-internes-brest.firebasestorage.app",
+        messagingSenderId: "165753334990",
+        appId: "1:165753334990:web:b820274812f34e5f73749f",
+        measurementId: "G-NFYWTE3L3Z"
+    };
+
+    /* Renseignez ici le lieu réel de chaque atelier (salle, bâtiment, étage...) */
+    const ATELIERS = [
+        {id:1, name:"Urgences vitales", location:"Salle TD 6"},
+        {id:2, name:"Courriers de sortie", location:"Salle CDC"},
+        {id:3, name:"Parcours patient", location:"Salle TD 11"},
+        {id:4, name:"Transfusion", location:"Salle TD 12"},
+        {id:5, name:"Infectiologie", location:"Salle TD 13"},
+        {id:6, name:"Patient âgé", location:"Salle TD 14"},
+        {id:7, name:"Prescription", location:"Salle Direction des affaires médicales"},
+        {id:8, name:"Ateliers pratiques — suture, SNG, SAD", location:"Salle Ophtalmologie"},
+        {id:9, name:"Déglutition", location:"Salle Amphi IV"}
+    ];
+    const MAX_CHOICES = 6;
+    const ADMIN_KEY = 'Accueil!2026!';
+
+    /* Créneaux réels de la journée (l'ordre doit correspondre aux 6 créneaux
+       de répartition). Si vous changez le nombre de créneaux dans l'espace
+       organisateur au-delà de 6, les créneaux supplémentaires s'afficheront
+       sans horaire tant que vous n'aurez pas complété ce tableau. */
+    const SLOTS_INFO = [
+        {start:"09h00", end:"09h45"},
+        {start:"10h00", end:"10h45"},
+        {start:"11h00", end:"11h45"},
+        {start:"13h30", end:"14h15"},
+        {start:"14h30", end:"15h15"},
+        {start:"15h30", end:"16h30"}
+    ];
+
+    /* Temps forts communs à tout le monde, affichés dans chaque planning
+       personnel en plus des ateliers choisis. */
+    const FIXED_EVENTS = [
+        {time:"08h30", label:"Accueil"},
+        {time:"12h00", label:"Repas"},
+        {time:"17h30", label:"Pot de fin de journée"},
+        {time:"19h00", label:"Soirée"},
+        {time:"00h00", label:"Tonus"}
+    ];
+
+    function slotLabel(i){
+        const info = SLOTS_INFO[i];
+        return info ? `${info.start} – ${info.end}` : `Créneau ${i+1}`;
+    }
+    function timeToMinutes(t){
+        const m = String(t).match(/(\d{1,2})h(\d{2})/);
+        if(!m) return 0;
+        let h = parseInt(m[1], 10);
+        const mins = parseInt(m[2], 10);
+        if(h === 0) h = 24; // "00h00" (minuit) doit apparaître en fin de journée, pas au début
+        return h * 60 + mins;
+    }
+    function ateLocation(id){
+        const a = ATELIERS.find(x => x.id == id);
+        return a ? a.location : '';
+    }
+
+    let selected = [];
+    let db = null;
+    let firebaseReady = false;
+
+    try {
+        if (FIREBASE_CONFIG.apiKey !== "VOTRE_API_KEY") {
+            firebase.initializeApp(FIREBASE_CONFIG);
+            db = firebase.firestore();
+            firebaseReady = true;
+        }
+    } catch(e){ console.error('Firebase init error', e); }
+
+    if(!firebaseReady){
+        document.getElementById('setupBannerForm').classList.remove('hidden');
+        document.getElementById('setupBannerAdmin').classList.remove('hidden');
+        document.getElementById('submitBtn').disabled = true;
+    }
+
+    // ---------- helpers ----------
+    function normalizeKey(first, last){
+        return (first + ' ' + last)
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase().trim().replace(/\s+/g, ' ')
+            .replace(/[^a-z ]/g, '');
+    }
+    function ateName(id){
+        const a = ATELIERS.find(x => x.id == id);
+        return a ? a.name : ('Atelier ' + id);
+    }
+
+    // ---------- NAVIGATION ----------
+    function goTo(view){
+        ['Form','Confirm','Lookup','AdminLogin','Admin'].forEach(v=>{
+            document.getElementById('view'+v).classList.add('hidden');
+        });
+        if(view==='form'){ renderChecklist(); document.getElementById('viewForm').classList.remove('hidden'); }
+        if(view==='confirm'){ document.getElementById('viewConfirm').classList.remove('hidden'); }
+        if(view==='lookup'){ document.getElementById('viewLookup').classList.remove('hidden'); }
+        if(view==='adminLogin'){ document.getElementById('viewAdminLogin').classList.remove('hidden'); }
+        if(view==='admin'){ document.getElementById('viewAdmin').classList.remove('hidden'); loadAdmin(); }
+    }
+
+    // ---------- QUESTIONNAIRE ----------
+    function renderChecklist(){
+        selected = [];
+        const list = document.getElementById('checklist');
+        list.innerHTML = ATELIERS.map(a => `
+            <label class="choice" id="choice-${a.id}" onclick="toggleChoice(event, ${a.id})">
+                <input type="checkbox" id="cb-${a.id}">
+                <span class="box"></span>
+                <span class="num">${a.id}.</span>
+                <span class="label">${a.name}</span>
+            </label>
+        `).join('');
+        updateCounter();
+        document.getElementById('formError').textContent = '';
+    }
+
+    function toggleChoice(e, id){
+        e.preventDefault();
+        const idx = selected.indexOf(id);
+        if(idx > -1){
+            selected.splice(idx, 1);
+        } else {
+            if(selected.length >= MAX_CHOICES) return;
+            selected.push(id);
+        }
+        document.getElementById('choice-'+id).classList.toggle('checked', selected.includes(id));
+        updateCounter();
+    }
+
+    function updateCounter(){
+        const c = document.getElementById('counter');
+        c.textContent = `${selected.length} / ${MAX_CHOICES} sélectionnés`;
+        c.classList.toggle('full', selected.length >= MAX_CHOICES);
+        ATELIERS.forEach(a=>{
+            const el = document.getElementById('choice-'+a.id);
+            if(!el) return;
+            el.classList.toggle('disabled', !selected.includes(a.id) && selected.length >= MAX_CHOICES);
+        });
+    }
+
+    async function submitChoices(){
+        const err = document.getElementById('formError');
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+
+        if(!firstName || !lastName){ err.textContent = 'Renseignez votre prénom et votre nom.'; return; }
+        if(selected.length === 0){ err.textContent = 'Sélectionnez au moins un atelier.'; return; }
+        if(!firebaseReady){ err.textContent = "Base de données non configurée, contactez l'organisateur."; return; }
+        err.textContent = '';
+
+        const key = normalizeKey(firstName, lastName);
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true; btn.textContent = 'Enregistrement…';
+
+        try {
+            const ref = db.collection('submissions').doc(key);
+            const existing = await ref.get();
+            const isUpdate = existing.exists;
+
+            await ref.set({
+                firstName, lastName,
+                choices: [...selected],
+                updatedAt: Date.now()
+            });
+
+            document.getElementById('confirmTitle').textContent = isUpdate ? 'Choix mis à jour' : 'Choix enregistrés';
+            document.getElementById('confirmSubtitle').textContent = isUpdate
+                ? 'Une réponse existait déjà pour ce nom : elle a été remplacée par vos nouveaux choix.'
+                : 'Merci, votre réponse a bien été enregistrée.';
+            document.getElementById('confirmName').textContent = `${firstName} ${lastName}`;
+            document.getElementById('confirmChoices').textContent = selected.map(ateName).join(', ');
+            goTo('confirm');
+        } catch(e){
+            console.error(e);
+            err.textContent = "Erreur d'enregistrement, réessayez.";
+        } finally {
+            btn.disabled = false; btn.textContent = 'Valider mes choix';
+        }
+    }
+
+    // ---------- LOOKUP ----------
+    async function lookupSchedule(){
+        const box = document.getElementById('lookupResult');
+        const firstName = document.getElementById('lookupFirst').value.trim();
+        const lastName = document.getElementById('lookupLast').value.trim();
+        if(!firstName || !lastName){ box.innerHTML = '<div class="error">Renseignez prénom et nom.</div>'; return; }
+        if(!firebaseReady){ box.innerHTML = '<div class="error">Base de données non configurée.</div>'; return; }
+
+        box.innerHTML = '<div class="loading">Recherche…</div>';
+        const key = normalizeKey(firstName, lastName);
+
+        try {
+            const subDoc = await db.collection('submissions').doc(key).get();
+            if(!subDoc.exists){
+                box.innerHTML = "<div class=\"error\">Aucune réponse trouvée pour ce nom. Vérifiez l'orthographe.</div>";
+                return;
+            }
+            const metaDoc = await db.collection('meta').doc('state').get();
+            const meta = metaDoc.exists ? metaDoc.data() : null;
+
+            if(!meta || !meta.published || !meta.schedule){
+                box.innerHTML = '<div class="note" style="margin-top:20px;">La répartition n\'est pas encore publiée. Revenez plus tard.</div>';
+                return;
+            }
+
+            const schedule = meta.schedule;
+            const slots = meta.settings.slots;
+            const assign = schedule.assignments[key] || {};
+            const missed = (schedule.unassigned && schedule.unassigned[key]) || [];
+
+            // On construit la journée complète, dans l'ordre chronologique :
+            // les ateliers attribués + les temps forts communs à tous.
+            const timeline = [];
+            FIXED_EVENTS.forEach(ev => timeline.push({
+                sort: timeToMinutes(ev.time), time: ev.time, label: ev.label, fixed: true
+            }));
+            for(let s=0; s<slots; s++){
+                const atelierId = Object.keys(assign).find(aid => assign[aid] === s);
+                const info = SLOTS_INFO[s];
+                timeline.push({
+                    sort: info ? timeToMinutes(info.start) : (2000 + s),
+                    time: slotLabel(s),
+                    label: atelierId ? `${ateName(atelierId)} — ${ateLocation(atelierId)}` : 'Libre',
+                    fixed: false,
+                    empty: !atelierId
+                });
+            }
+            timeline.sort((a, b) => a.sort - b.sort);
+
+            let rows = timeline.map(item => `
+                <tr class="${item.fixed ? 'fixed-row' : ''}">
+                    <td class="slot-num">${item.time}</td>
+                    <td class="${item.empty ? 'empty' : ''}">${item.label}</td>
+                </tr>
+            `).join('');
+            let html = `<div class="search-result">
+                <h3 style="margin-bottom:15px;">✅ Planning de ${firstName} ${lastName}</h3>
+                <table class="schedule-table"><tbody>${rows}</tbody></table>
+            </div>`;
+            if(missed.length){
+                html += `<div class="warn-box">Ces ateliers n'ont pas pu vous être attribués (effectif insuffisant pour ouvrir un groupe, ou créneaux incompatibles) : ${missed.map(ateName).join(', ')}. Votre créneau reste libre ; contactez l'organisateur si besoin.</div>`;
+            }
+            box.innerHTML = html;
+        } catch(e){
+            console.error(e);
+            box.innerHTML = '<div class="error">Erreur de recherche, réessayez.</div>';
+        }
+    }
+
+    // ---------- ADMIN LOGIN ----------
+    function adminLogin(){
+        const key = document.getElementById('adminKey').value;
+        if(key === ADMIN_KEY){
+            document.getElementById('adminKey').value = '';
+            document.getElementById('adminLoginError').textContent = '';
+            goTo('admin');
+        } else {
+            document.getElementById('adminLoginError').textContent = 'Clé d\'accès incorrecte.';
+        }
+    }
+
+    // ---------- ADMIN DASHBOARD ----------
+    let adminSubmissions = [];   // [{key, firstName, lastName, choices}]
+    let adminSettings = {slots:6, capacity:20, minGroup:8};
+    let adminSchedule = null;
+    let adminPublished = false;
+
+    async function loadAdmin(){
+        if(!firebaseReady) return;
+        document.getElementById('adminLoading').classList.remove('hidden');
+        document.getElementById('adminOverview').classList.add('hidden');
+
+        const subsSnap = await db.collection('submissions').get();
+        adminSubmissions = subsSnap.docs.map(d => ({ key: d.id, ...d.data() }));
+
+        const metaDoc = await db.collection('meta').doc('state').get();
+        if(metaDoc.exists){
+            const meta = metaDoc.data();
+            adminSettings = meta.settings || {slots:6, capacity:20, minGroup:8};
+            if(!adminSettings.minGroup) adminSettings.minGroup = 8;
+            adminSchedule = meta.schedule || null;
+            adminPublished = !!meta.published;
+        } else {
+            adminSettings = {slots:6, capacity:20, minGroup:8};
+            adminSchedule = null;
+            adminPublished = false;
+        }
+
+        document.getElementById('adminLoading').classList.add('hidden');
+        document.getElementById('adminOverview').classList.remove('hidden');
+        renderAdminOverview();
+    }
+
+    function renderAdminOverview(){
+        document.getElementById('statTotal').textContent = adminSubmissions.length;
+        document.getElementById('statPublished').textContent = adminPublished ? 'Oui' : 'Non';
+        document.getElementById('settingSlots').value = adminSettings.slots;
+        document.getElementById('settingCapacity').value = adminSettings.capacity;
+        document.getElementById('settingMin').value = adminSettings.minGroup || 8;
+        document.getElementById('publishBtn').textContent = adminPublished ? 'Dépublier les résultats' : 'Publier les résultats';
+        document.getElementById('publishBtn').disabled = !adminSchedule;
+
+        const counts = {};
+        ATELIERS.forEach(a => counts[a.id] = 0);
+        adminSubmissions.forEach(s => (s.choices||[]).forEach(id => counts[id]++));
+        const max = Math.max(1, ...Object.values(counts));
+        document.getElementById('demandBars').innerHTML =
+            '<h3 style="font-size:15px;margin-bottom:12px;color:#666;">Nombre de demandes par atelier</h3>' +
+            ATELIERS.map(a => `
+                <div class="bar-row">
+                    <div class="name">${a.id}. ${a.name}</div>
+                    <div class="bar-track"><div class="bar-fill" style="width:${(counts[a.id]/max*100).toFixed(0)}%"></div></div>
+                    <div class="count">${counts[a.id]}</div>
+                </div>
+            `).join('');
+
+        renderScheduleSection();
+    }
+
+    // ---------- RÉPARTITION : groupes concentrés, fermeture sous l'effectif minimum, regroupement par demi-journée ----------
+    function shuffleArray(arr){
+        for(let i = arr.length - 1; i > 0; i--){
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // 0 = matin (début avant 12h), 1 = après-midi
+    function slotHalf(s){
+        const info = SLOTS_INFO[s];
+        return (info && timeToMinutes(info.start) < 12 * 60) ? 0 : 1;
+    }
+
+    // Une tentative :
+    //  1) chaque atelier reçoit une demi-journée "préférée" (demande équilibrée
+    //     entre matin et après-midi) ;
+    //  2) chaque interne est placé via un appariement (ateliers -> créneaux
+    //     distincts) qui privilégie les groupes déjà les plus remplis, puis la
+    //     demi-journée préférée de l'atelier ;
+    //  3) on ferme les groupes qu'on peut vider en déplaçant leurs membres ;
+    //  4) les groupes encore sous l'effectif minimum sont fermés.
+    function attemptAllocation(submissions, slots, capacity, minSize, cancelled){
+        const ids = ATELIERS.map(a => a.id);
+        const load = {};
+        const demand = {};
+        ids.forEach(id => { load[id] = Array(slots).fill(0); demand[id] = 0; });
+
+        const people = submissions.map(sub => ({
+            key: sub.key,
+            choices: [...new Set(sub.choices || [])].filter(a => !cancelled.includes(a))
+        }));
+        people.forEach(p => p.choices.forEach(a => demand[a]++));
+
+        // demi-journée préférée, avec un peu d'aléa entre tentatives
+        const halfLoad = [0, 0];
+        const prefHalf = {};
+        shuffleArray([...ids]).sort((a, b) => demand[b] * (0.7 + Math.random() * 0.6) - demand[a] * (0.7 + Math.random() * 0.6))
+            .forEach(a => {
+                const h = halfLoad[0] <= halfLoad[1] ? 0 : 1;
+                prefHalf[a] = h; halfLoad[h] += demand[a];
+            });
+
+        const prio = {};
+        ids.forEach(id => {
+            const mine = [], other = [];
+            for(let s = 0; s < slots; s++) (slotHalf(s) === prefHalf[id] ? mine : other).push(s);
+            prio[id] = shuffleArray(mine).concat(shuffleArray(other));
+        });
+
+        const assignments = {};
+        const unassigned = {};
+
+        function candidates(a){
+            return prio[a].filter(s => load[a][s] < capacity)
+                .sort((x, y) => (load[a][y] - load[a][x]) || (prio[a].indexOf(x) - prio[a].indexOf(y)));
+        }
+
+        shuffleArray([...people]).forEach(p => {
+            const owner = {};
+            const choices = [...p.choices];
+            choices.sort((a, b) => candidates(a).length - candidates(b).length);
+
+            function tryPlace(a, visited){
+                for(const s of candidates(a)){
+                    if(visited.has(s)) continue;
+                    visited.add(s);
+                    if(owner[s] === undefined || tryPlace(owner[s], visited)){
+                        owner[s] = a;
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            const missed = [];
+            choices.forEach(a => { if(!tryPlace(a, new Set())) missed.push(a); });
+
+            const perPerson = {};
+            Object.keys(owner).forEach(s => {
+                perPerson[owner[s]] = Number(s);
+                load[owner[s]][Number(s)]++;
+            });
+            assignments[p.key] = perPerson;
+            if(missed.length) unassigned[p.key] = missed;
+        });
+
+        consolidate(assignments, load, slots, capacity, minSize);
+        repairUnderMin(assignments, load, slots, capacity, minSize);
+
+        // fermeture des groupes encore sous l'effectif minimum
+        ATELIERS.forEach(a => {
+            for(let s = 0; s < slots; s++){
+                const n = load[a.id][s];
+                if(n > 0 && n < minSize){
+                    Object.keys(assignments).forEach(k => {
+                        if(assignments[k][a.id] === s){
+                            delete assignments[k][a.id];
+                            (unassigned[k] = unassigned[k] || []).push(a.id);
+                        }
+                    });
+                    load[a.id][s] = 0;
+                }
+            }
+        });
+        refill(assignments, load, unassigned, slots, capacity, minSize, cancelled);
+        return { assignments, load, unassigned };
+    }
+
+    // Essaie de déplacer un interne de (atelier a, créneau from) vers (a, to).
+    // Direct si son créneau "to" est libre ; sinon échange avec un autre de ses
+    // ateliers b (b passe de "to" à "from"), à condition que les deux groupes
+    // concernés restent valides. Modifie `mine` et `tmpLoad` si succès.
+    function tryMove(mine, a, from, to, tmpLoad, capacity, minSize){
+        const usedBy = {};
+        Object.keys(mine).forEach(b => usedBy[mine[b]] = Number(b));
+        if(usedBy[to] === undefined){
+            mine[a] = to;
+            tmpLoad[a][from]--; tmpLoad[a][to]++;
+            return true;
+        }
+        const b = usedBy[to];
+        if(b !== a && tmpLoad[b][from] > 0 && tmpLoad[b][from] < capacity && tmpLoad[b][to] - 1 >= minSize){
+            mine[a] = to; mine[b] = from;
+            tmpLoad[a][from]--; tmpLoad[a][to]++;
+            tmpLoad[b][to]--; tmpLoad[b][from]++;
+            return true;
+        }
+        return false;
+    }
+
+    // Pour un groupe sous l'effectif minimum, tente de le "remplir" en
+    // rapatriant des membres de groupes plus gros du même atelier.
+    function repairUnderMin(assignments, load, slots, capacity, minSize){
+        const keys = Object.keys(assignments);
+        for(let pass = 0; pass < 3; pass++){
+            let progress = false;
+            ATELIERS.forEach(a => {
+                for(let s = 0; s < slots; s++){
+                    const n0 = load[a.id][s];
+                    if(n0 === 0 || n0 >= minSize) continue;
+                    const tmpLoad = {};
+                    Object.keys(load).forEach(id => tmpLoad[id] = [...load[id]]);
+                    const localAssign = {};
+                    let need = minSize - n0;
+                    const donors = [];
+                    for(let t = 0; t < slots; t++) if(t !== s && load[a.id][t] > minSize) donors.push(t);
+                    donors.sort((x, y) => load[a.id][y] - load[a.id][x]);
+                    for(const t of donors){
+                        const members = keys.filter(k => (localAssign[k] || assignments[k])[a.id] === t);
+                        for(const k of members){
+                            if(need <= 0 || tmpLoad[a.id][t] <= minSize || tmpLoad[a.id][s] >= capacity) break;
+                            const mine = Object.assign({}, localAssign[k] || assignments[k]);
+                            if(tryMove(mine, a.id, t, s, tmpLoad, capacity, minSize)){
+                                localAssign[k] = mine; need--;
+                            }
+                        }
+                        if(need <= 0) break;
+                    }
+                    if(need <= 0){
+                        Object.keys(localAssign).forEach(k => assignments[k] = localAssign[k]);
+                        Object.keys(tmpLoad).forEach(id => load[id] = tmpLoad[id]);
+                        progress = true;
+                    }
+                }
+            });
+            if(!progress) break;
+        }
+    }
+
+    // Replace les internes dont un atelier n'a pas été attribué dans un groupe
+    // déjà ouvert (et valide) de cet atelier, si leur créneau est libre.
+    function refill(assignments, load, unassigned, slots, capacity, minSize, cancelled){
+        Object.keys(unassigned).forEach(k => {
+            const still = [];
+            unassigned[k].forEach(a => {
+                if(cancelled.includes(a)) { still.push(a); return; }
+                const used = new Set(Object.values(assignments[k]));
+                let best = -1;
+                for(let t = 0; t < slots; t++){
+                    if(used.has(t)) continue;
+                    if(load[a][t] >= minSize && load[a][t] < capacity && (best === -1 || load[a][t] > load[a][best])) best = t;
+                }
+                if(best !== -1){ assignments[k][a] = best; load[a][best]++; }
+                else still.push(a);
+            });
+            if(still.length) unassigned[k] = still; else delete unassigned[k];
+        });
+    }
+
+    // Ferme les groupes les plus petits en déplaçant leurs membres vers un
+    // groupe déjà ouvert du même atelier. Un membre peut aussi échanger son
+    // créneau avec un autre de ses ateliers pour libérer la place. Les groupes
+    // situés dans la demi-journée minoritaire d'un atelier sont traités en
+    // premier, pour regrouper chaque atelier sur matin OU après-midi.
+    function consolidate(assignments, load, slots, capacity, minSize){
+        const keys = Object.keys(assignments);
+        let changed = true, guard = 0;
+        while(changed && guard++ < 20){
+            changed = false;
+            const groups = [];
+            ATELIERS.forEach(a => {
+                const halfTotal = [0, 0];
+                for(let s = 0; s < slots; s++) halfTotal[slotHalf(s)] += load[a.id][s];
+                const minority = halfTotal[0] <= halfTotal[1] ? 0 : 1;
+                const split = halfTotal[0] > 0 && halfTotal[1] > 0;
+                for(let s = 0; s < slots; s++){
+                    if(load[a.id][s] > 0){
+                        const bias = (split && slotHalf(s) === minority) ? -1000 : 0;
+                        groups.push({a: a.id, s, n: load[a.id][s], sortKey: load[a.id][s] + bias});
+                    }
+                }
+            });
+            groups.sort((x, y) => x.sortKey - y.sortKey);
+
+            for(const g of groups){
+                if(load[g.a][g.s] === 0) continue;
+                const members = keys.filter(k => assignments[k][g.a] === g.s);
+                const tmpLoad = {};
+                Object.keys(load).forEach(id => tmpLoad[id] = [...load[id]]);
+                const localAssign = {};
+                let ok = true;
+
+                for(const k of members){
+                    const mine = Object.assign({}, localAssign[k] || assignments[k]);
+                    const targets = [];
+                    for(let t = 0; t < slots; t++){
+                        if(t === g.s) continue;
+                        if(tmpLoad[g.a][t] > 0 && tmpLoad[g.a][t] < capacity) targets.push(t);
+                    }
+                    targets.sort((x, y) => tmpLoad[g.a][y] - tmpLoad[g.a][x]);
+                    let done = false;
+                    for(const t of targets){
+                        if(tryMove(mine, g.a, g.s, t, tmpLoad, capacity, minSize)){ done = true; break; }
+                    }
+                    if(!done){ ok = false; break; }
+                    localAssign[k] = mine;
+                }
+
+                if(ok){
+                    Object.keys(localAssign).forEach(k => assignments[k] = localAssign[k]);
+                    Object.keys(tmpLoad).forEach(id => load[id] = tmpLoad[id]);
+                    changed = true;
+                }
+            }
+        }
+    }
+
+    function allocationStats(result, slots, capacity, minSize){
+        let missed = 0, open = 0, under = 0, lowerBound = 0, splitAvoidable = 0, splitTotal = 0;
+        Object.values(result.unassigned).forEach(arr => missed += arr.length);
+        const halfSlots = [0, 0];
+        for(let s = 0; s < slots; s++) halfSlots[slotHalf(s)]++;
+        ATELIERS.forEach(a => {
+            let total = 0;
+            const halfOpen = [0, 0];
+            result.load[a.id].forEach((n, s) => {
+                total += n;
+                if(n > 0){
+                    open++; halfOpen[slotHalf(s)]++;
+                    if(n < minSize) under++;
+                }
+            });
+            lowerBound += Math.ceil(total / capacity);
+            if(halfOpen[0] > 0 && halfOpen[1] > 0){
+                splitTotal++;
+                if(total <= Math.max(halfSlots[0], halfSlots[1]) * capacity) splitAvoidable++;
+            }
+        });
+        return { missed, open, under, lowerBound, splitAvoidable, splitTotal };
+    }
+
+    function scoreAllocation(result, slots, capacity, minSize){
+        const st = allocationStats(result, slots, capacity, minSize);
+        return st.missed * 1000000 + st.splitAvoidable * 300 + st.open * 10;
+    }
+
+    function computeBestAllocation(submissions, slots, capacity, minSize, budgetMs = 3000){
+        // Ateliers dont la demande totale est inférieure à l'effectif minimum :
+        // annulés d'office (aucun groupe viable possible).
+        const demand = {};
+        ATELIERS.forEach(a => demand[a.id] = 0);
+        submissions.forEach(s => [...new Set(s.choices || [])].forEach(a => demand[a]++));
+        const cancelled = ATELIERS.map(a => a.id).filter(id => demand[id] > 0 && demand[id] < minSize);
+
+        let best = null, bestScore = Infinity;
+        const t0 = Date.now();
+        let i = 0;
+        while(i < 800 && (Date.now() - t0) < budgetMs){
+            i++;
+            const result = attemptAllocation(submissions, slots, capacity, minSize, cancelled);
+            const score = scoreAllocation(result, slots, capacity, minSize);
+            if(score < bestScore){ bestScore = score; best = result; }
+            const st = allocationStats(best, slots, capacity, minSize);
+            if(st.missed === 0 && st.splitAvoidable === 0 && st.open === st.lowerBound) break;
+        }
+
+        // un atelier qui n'a pu former aucun groupe viable est annulé lui aussi
+        ATELIERS.forEach(a => {
+            const placed = best.load[a.id].reduce((x, y) => x + y, 0);
+            if(demand[a.id] > 0 && placed === 0 && !cancelled.includes(a.id)) cancelled.push(a.id);
+        });
+        // les internes concernés par un atelier annulé le voient dans leur planning
+        submissions.forEach(sub => {
+            // (ceux déjà listés comme non placés pour cet atelier ne sont pas dupliqués)
+            const already = best.unassigned[sub.key] || [];
+            const lost = [...new Set(sub.choices || [])].filter(a => cancelled.includes(a) && !already.includes(a));
+            if(lost.length || already.length){
+                best.unassigned[sub.key] = already.concat(lost);
+            }
+        });
+        best.cancelled = cancelled;
+        return best;
+    }
+
+    async function runAllocation(){
+        if(!firebaseReady) return;
+        if(adminPublished && !confirm("Les résultats sont publiés. Relancer la répartition va la modifier et les dépublier. Continuer ?")) return;
+
+        adminSettings.slots = Math.max(MAX_CHOICES, parseInt(document.getElementById('settingSlots').value) || 6);
+        adminSettings.capacity = Math.max(1, parseInt(document.getElementById('settingCapacity').value) || 20);
+        adminSettings.minGroup = Math.max(1, parseInt(document.getElementById('settingMin').value) || 8);
+
+        if(adminSubmissions.length === 0){
+            document.getElementById('allocWarning').innerHTML = '<div class="error">Aucune réponse à répartir pour le moment.</div>';
+            return;
+        }
+
+        document.getElementById('allocWarning').innerHTML = '<div class="loading">Optimisation de la répartition (quelques secondes)…</div>';
+        await new Promise(r => setTimeout(r, 30)); // laisse le navigateur afficher le message
+
+        const { assignments, load, unassigned, cancelled } = computeBestAllocation(
+            adminSubmissions, adminSettings.slots, adminSettings.capacity, adminSettings.minGroup
+        );
+
+        adminSchedule = { assignments, load, unassigned, cancelled };
+        adminPublished = false;
+
+        await db.collection('meta').doc('state').set({
+            settings: adminSettings,
+            schedule: adminSchedule,
+            published: false
+        });
+
+        renderAdminOverview();
+        document.getElementById('allocWarning').innerHTML = allocationSummaryHtml();
+        document.getElementById('scheduleCard').style.display = 'block';
+    }
+
+    function allocationSummaryHtml(){
+        if(!adminSchedule) return '';
+        const st = allocationStats(adminSchedule, adminSettings.slots, adminSettings.capacity, adminSettings.minGroup || 8);
+        const cancelled = adminSchedule.cancelled || [];
+        const cancelledSet = new Set(cancelled);
+        let html = `<div class="note">Répartition de ${adminSubmissions.length} interne(s) : ${st.open} groupes ouverts (minimum théorique : ${st.lowerBound}), tous d'au moins ${adminSettings.minGroup || 8} personnes, aucun conflit de créneau, capacité respectée. Pensez à publier pour la rendre visible.</div>`;
+
+        if(st.splitTotal > 0){
+            html += `<div class="note" style="background:#eef0fd;border-color:#c5c9f2;color:#4c50a0;">${st.splitTotal} atelier(s) ont des groupes à la fois le matin et l'après-midi${st.splitAvoidable ? ` (dont ${st.splitAvoidable} qui auraient pu être regroupés, relancez pour tenter d'améliorer)` : ' (inévitable vu le nombre de participants et les contraintes de créneaux)'}.</div>`;
+        }
+
+        const keyToLabel = {};
+        adminSubmissions.forEach(x => keyToLabel[x.key] = `${x.firstName} ${x.lastName}`);
+        const affected = {};   // atelier -> [noms]
+        Object.keys(adminSchedule.unassigned || {}).forEach(k => {
+            adminSchedule.unassigned[k].forEach(a => {
+                (affected[a] = affected[a] || []).push(keyToLabel[k] || k);
+            });
+        });
+        const ids = Object.keys(affected);
+        if(ids.length){
+            html += '<div class="warn-box"><b>Ateliers non attribués à certains internes :</b><br>' + ids.map(a =>
+                `• <b>${ateName(a)}</b> ${cancelledSet.has(Number(a)) ? '(atelier annulé, effectif insuffisant)' : '(groupe fermé, effectif insuffisant ou créneaux incompatibles)'} : ${affected[a].join(', ')}`
+            ).join('<br>') + '</div>';
+        }
+        return html;
+    }
+
+    function renderScheduleSection(){
+        const card = document.getElementById('scheduleCard');
+        if(!adminSchedule){ card.style.display = 'none'; return; }
+        card.style.display = 'block';
+
+        let head = '<tr><th>Atelier</th>' + Array.from({length:adminSettings.slots}, (_,i)=>`<th>${slotLabel(i)}</th>`).join('') + '</tr>';
+        let rows = ATELIERS.map(a => {
+            const cells = adminSchedule.load[a.id].map(n => {
+                if(n === 0) return `<td class="closed">—</td>`;
+                const full = n >= adminSettings.capacity;
+                const under = n < (adminSettings.minGroup || 8);
+                return `<td class="${full ? 'full' : (under ? 'under' : '')}">${n}/${adminSettings.capacity}</td>`;
+            }).join('');
+            const halves = [false, false];
+            adminSchedule.load[a.id].forEach((n, s) => { if(n > 0) halves[slotHalf(s)] = true; });
+            const isCancelled = (adminSchedule.cancelled || []).includes(a.id);
+            const tag = isCancelled ? 'annulé (effectif insuffisant)'
+                : (halves[0] && halves[1] ? 'matin + après-midi' : (halves[0] ? 'matin' : (halves[1] ? 'après-midi' : 'aucune demande')));
+            return `<tr><td class="name-cell">${a.id}. ${a.name}<br><span style="font-weight:400;color:${isCancelled ? '#c0392b' : '#888'};font-size:12px;">${tag}</span></td>${cells}</tr>`;
+        }).join('');
+        document.getElementById('scheduleGrid').innerHTML = `<table class="grid"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+
+        const keyToLabel = {};
+        adminSubmissions.forEach(s => keyToLabel[s.key] = `${s.firstName} ${s.lastName}`);
+
+        const detail = ATELIERS.map(a => {
+            let lines = '';
+            for(let s=0; s<adminSettings.slots; s++){
+                const keys = Object.keys(adminSchedule.assignments).filter(k => adminSchedule.assignments[k][a.id] === s);
+                const labels = keys.map(k => keyToLabel[k] || k);
+                lines += `<div class="slot-line"><b>${slotLabel(s)}</b> (${keys.length}) : ${labels.length ? labels.join(', ') : '—'}</div>`;
+            }
+            return `<details class="accordion"><summary>${a.id}. ${a.name}</summary><div class="body">${lines}</div></details>`;
+        }).join('');
+        document.getElementById('scheduleDetail').innerHTML = '<h3 style="font-size:15px;margin-bottom:10px;color:#666;">Détail par atelier</h3>' + detail;
+    }
+
+    async function togglePublish(){
+        if(!adminSchedule || !firebaseReady) return;
+        adminPublished = !adminPublished;
+        await db.collection('meta').doc('state').set({
+            settings: adminSettings,
+            schedule: adminSchedule,
+            published: adminPublished
+        });
+        renderAdminOverview();
+    }
+
+    function exportCSV(){
+        if(!adminSchedule){ alert("Lancez d'abord la répartition."); return; }
+        let csv = 'Prénom;Nom;' + Array.from({length:adminSettings.slots}, (_,i)=>`Créneau ${i+1}`).join(';') + '\n';
+        adminSubmissions.forEach(sub => {
+            const assign = adminSchedule.assignments[sub.key] || {};
+            const row = [sub.firstName, sub.lastName];
+            for(let s=0; s<adminSettings.slots; s++){
+                const atelierId = Object.keys(assign).find(aid => assign[aid] === s);
+                row.push(atelierId ? ateName(atelierId) : '');
+            }
+            csv += row.join(';') + '\n';
+        });
+        const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'repartition_ateliers.csv'; a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    async function resetAll(){
+        if(!firebaseReady) return;
+        if(!confirm('Supprimer toutes les réponses et la répartition ? Cette action est irréversible.')) return;
+
+        const batchDeletes = adminSubmissions.map(s => db.collection('submissions').doc(s.key).delete());
+        await Promise.all(batchDeletes);
+        await db.collection('meta').doc('state').set({
+            settings: {slots:6, capacity:20, minGroup:8}, schedule: null, published: false
+        });
+
+        adminSubmissions = [];
+        adminSchedule = null;
+        adminPublished = false;
+        adminSettings = {slots:6, capacity:20, minGroup:8};
+        renderAdminOverview();
+        document.getElementById('scheduleCard').style.display = 'none';
+        document.getElementById('allocWarning').innerHTML = '';
+    }
+
+    // ---------- INIT ----------
+    goTo('form');
+</script>
+</body>
+</html>
